@@ -1,10 +1,16 @@
-CREATE DATABASE SUBASTAS
+--Crea base de datos
+CREATE DATABASE subastas
 GO
 
 USE SUBASTAS
 GO
 
-CREATE TABLE usuarios (
+--Crea esquema
+CREATE SCHEMA subastas
+GO
+
+--Crea tablas
+CREATE TABLE subastas.usuarios (
   id_usuario INT IDENTITY(1,1) NOT NULL,
   nombre_usuario VARCHAR(40) NOT NULL,
   apellido_usuario VARCHAR(40) NOT NULL,
@@ -15,7 +21,7 @@ CREATE TABLE usuarios (
 )
 GO
 
-CREATE TABLE cuenta (
+CREATE TABLE subastas.cuenta (
   id_cuenta INT IDENTITY(1,1) NOT NULL,
   saldo DECIMAL(8,2) NOT NULL,
   id_usuario INT NOT NULL,
@@ -23,7 +29,7 @@ CREATE TABLE cuenta (
 )
 GO
 
-CREATE TABLE menus (
+CREATE TABLE subastas.menus (
   id_menu INT IDENTITY(1,1) NOT NULL,
   nombre_menu VARCHAR(40) NOT NULL,
   esta_activo BIT NOT NULL,
@@ -32,7 +38,7 @@ CREATE TABLE menus (
 )
 GO
 
-CREATE TABLE subastas (
+CREATE TABLE subastas.subastas (
   id_subasta INT IDENTITY(1,1) NOT NULL,
   titulo_subasta VARCHAR(100) NOT NULL,
   monto_inicial DECIMAL(8,2) NOT NULL,
@@ -43,7 +49,7 @@ CREATE TABLE subastas (
 )
 GO
 
-CREATE TABLE participantes_subasta (
+CREATE TABLE subastas.participantes_subasta (
   id_subasta INT NOT NULL,
   id_usuario INT NOT NULL,
   esta_activo BIT NOT NULL,
@@ -51,7 +57,7 @@ CREATE TABLE participantes_subasta (
 )
 GO
 
-CREATE TABLE permisos (
+CREATE TABLE subastas.permisos (
   id_permiso INT IDENTITY(1,1) NOT NULL,
   nombre_permiso VARCHAR(40) NOT NULL,
   esta_activo BIT NOT NULL,
@@ -60,7 +66,7 @@ CREATE TABLE permisos (
 )
 GO
 
-CREATE TABLE pujas (
+CREATE TABLE subastas.pujas (
   id_puja INT IDENTITY(1,1) NOT NULL,
   monto_puja DECIMAL(8,2) NOT NULL,
   fecha_puja DATE NOT NULL,
@@ -70,7 +76,7 @@ CREATE TABLE pujas (
 )
 GO
 
-CREATE TABLE roles (
+CREATE TABLE subastas.roles (
   id_rol INT IDENTITY(1,1) NOT NULL,
   nombre_rol VARCHAR(40) NOT NULL,
   esta_activo BIT NOT NULL,
@@ -78,7 +84,7 @@ CREATE TABLE roles (
 )
 GO
 
-CREATE TABLE rol_permiso (
+CREATE TABLE subastas.rol_permiso (
   id_rol INT NOT NULL,
   id_permiso INT NOT NULL,
   esta_activo BIT NOT NULL,
@@ -86,7 +92,7 @@ CREATE TABLE rol_permiso (
 )
 GO
 
-CREATE TABLE transacciones (
+CREATE TABLE subastas.transacciones (
   id_transaccion INT IDENTITY(1,1) NOT NULL,
   monto_transaccion DECIMAL(8,2) NOT NULL,
   fecha_transaccion DATE NOT NULL,
@@ -96,7 +102,7 @@ CREATE TABLE transacciones (
 )
 GO
 
-CREATE TABLE usuario_rol (
+CREATE TABLE subastas.usuario_rol (
   id_usuario INT NOT NULL,
   id_rol INT NOT NULL,
   esta_activo BIT NOT NULL,
@@ -104,62 +110,63 @@ CREATE TABLE usuario_rol (
 )
 GO
 
-ALTER TABLE cuenta
+--Crea Foreign keys
+ALTER TABLE subastas.cuenta
   ADD CONSTRAINT FK_cuenta_usuarios
-  FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario)
+  FOREIGN KEY (id_usuario) REFERENCES subastas.usuarios (id_usuario)
 GO
 
-ALTER TABLE menus
+ALTER TABLE subastas.menus
   ADD CONSTRAINT FK_menus_menus
-  FOREIGN KEY (id_menu_padre) REFERENCES menus (id_menu)
+  FOREIGN KEY (id_menu_padre) REFERENCES subastas.menus (id_menu)
 GO
 
-ALTER TABLE participantes_subasta
+ALTER TABLE subastas.participantes_subasta
   ADD CONSTRAINT FK_participantes_subasta_subastas
-  FOREIGN KEY (id_subasta) REFERENCES subastas (id_subasta)
+  FOREIGN KEY (id_subasta) REFERENCES subastas.subastas (id_subasta)
 GO
 
-ALTER TABLE participantes_subasta
+ALTER TABLE subastas.participantes_subasta
   ADD CONSTRAINT FK_participantes_subasta_usuarios
-  FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario)
+  FOREIGN KEY (id_usuario) REFERENCES subastas.usuarios (id_usuario)
 GO
 
-ALTER TABLE permisos
+ALTER TABLE subastas.permisos
   ADD CONSTRAINT FK_permisos_menus
-  FOREIGN KEY (id_menu) REFERENCES menus (id_menu)
+  FOREIGN KEY (id_menu) REFERENCES subastas.menus (id_menu)
 GO
 
-ALTER TABLE pujas
+ALTER TABLE subastas.pujas
   ADD CONSTRAINT FK_pujas_subastas
-  FOREIGN KEY (id_subasta) REFERENCES subastas (id_subasta)
+  FOREIGN KEY (id_subasta) REFERENCES subastas.subastas (id_subasta)
 GO
 
-ALTER TABLE pujas
+ALTER TABLE subastas.pujas
   ADD CONSTRAINT FK_pujas_usuarios
-  FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario)
+  FOREIGN KEY (id_usuario) REFERENCES subastas.usuarios (id_usuario)
 GO
 
-ALTER TABLE rol_permiso
+ALTER TABLE subastas.rol_permiso
   ADD CONSTRAINT FK_rol_permiso_roles
-  FOREIGN KEY (id_rol) REFERENCES roles (id_rol)
+  FOREIGN KEY (id_rol) REFERENCES subastas.roles (id_rol)
 GO
 
-ALTER TABLE rol_permiso
+ALTER TABLE subastas.rol_permiso
   ADD CONSTRAINT FK_rol_permiso_permisos
-  FOREIGN KEY (id_permiso) REFERENCES permisos (id_permiso)
+  FOREIGN KEY (id_permiso) REFERENCES subastas.permisos (id_permiso)
 GO
 
-ALTER TABLE transacciones
+ALTER TABLE subastas.transacciones
   ADD CONSTRAINT FK_transacciones_cuenta
-  FOREIGN KEY (id_cuenta) REFERENCES cuenta (id_cuenta)
+  FOREIGN KEY (id_cuenta) REFERENCES subastas.cuenta (id_cuenta)
 GO
 
-ALTER TABLE usuario_rol
+ALTER TABLE subastas.usuario_rol
   ADD CONSTRAINT FK_usuario_rol_usuarios
-  FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario)
+  FOREIGN KEY (id_usuario) REFERENCES subastas.usuarios (id_usuario)
 GO
 
-ALTER TABLE usuario_rol
+ALTER TABLE subastas.usuario_rol
   ADD CONSTRAINT FK_usuario_rol_roles
-  FOREIGN KEY (id_rol) REFERENCES roles (id_rol)
+  FOREIGN KEY (id_rol) REFERENCES subastas.roles (id_rol)
 GO
