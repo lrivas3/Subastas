@@ -12,7 +12,7 @@ namespace Subastas
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             
-            builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestDbContext")));
+            builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SubastasConnectionString")));
 
             var app = builder.Build();
 
