@@ -17,6 +17,10 @@ public partial class Subasta
 
     public string ImagenSubasta { get; set; } = null!;
 
+    public int? IdUsuario { get; set; }
+
+    public virtual Usuario? IdUsuarioNavigation { get; set; }
+
     public virtual ICollection<ParticipantesSubastum> ParticipantesSubasta { get; set; } = new List<ParticipantesSubastum>();
 
     public virtual ICollection<Puja> Pujas { get; set; } = new List<Puja>();

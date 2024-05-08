@@ -23,5 +23,7 @@ public partial class Usuario
 
     public virtual ICollection<Puja> Pujas { get; set; } = new List<Puja>();
 
+    public virtual ICollection<Subasta> Subasta { get; set; } = new List<Subasta>();
+
     public virtual ICollection<UsuarioRol> UsuarioRols { get; set; } = new List<UsuarioRol>();
 }

@@ -188,6 +188,7 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.IdSubasta).HasColumnName("id_subasta");
             entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.FechaSubasta).HasColumnName("fecha_subasta");
+            entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.ImagenSubasta)
                 .HasMaxLength(40)
                 .IsUnicode(false)
@@ -199,6 +200,10 @@ public partial class SubastasContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("titulo_subasta");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Subasta)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("FK_subastas_usuarios");
         });
 
         modelBuilder.Entity<Transaccione>(entity =>
