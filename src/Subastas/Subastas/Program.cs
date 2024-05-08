@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Subastas.DAL;
+
 namespace Subastas
 {
     public class Program
@@ -8,6 +11,8 @@ namespace Subastas
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            
+            builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("TestDbContext")));
 
             var app = builder.Build();
 
