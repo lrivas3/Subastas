@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Subastas.DAL.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 
-namespace Subastas.DAL;
+namespace Subastas.Database;
 
 public partial class SubastasContext : DbContext
 {

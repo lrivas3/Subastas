@@ -1,4 +1,4 @@
-﻿namespace Subastas.Repositories
+﻿namespace Subastas.Interfaces.Repositories
 {
     public interface IBaseRepository<T> where T : class
     {

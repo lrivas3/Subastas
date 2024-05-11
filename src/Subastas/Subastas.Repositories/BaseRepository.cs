@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Subastas.DAL;
-using System.Collections.Generic;
+using Subastas.Database;
 
-namespace Subastas.Repositories
+namespace Subastas.Interfaces.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {

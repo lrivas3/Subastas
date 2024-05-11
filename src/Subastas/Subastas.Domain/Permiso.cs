@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Subastas.DAL.Models;
+﻿namespace Subastas.Domain;
 
 public partial class Permiso
 {

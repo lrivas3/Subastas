@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Subastas.DAL;
+using Subastas.Database;
 
 namespace Subastas
 {

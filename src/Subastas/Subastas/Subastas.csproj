@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subastas.DAL\Subastas.DAL.csproj" />
+    <ProjectReference Include="..\Subastas.DAL\Subastas.Database.csproj" />
   </ItemGroup>
 
 </Project>
