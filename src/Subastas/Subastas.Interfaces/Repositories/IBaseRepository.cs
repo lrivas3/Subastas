@@ -7,6 +7,7 @@ namespace Subastas.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
         Task<bool> ExistsByPredicate(Expression<Func<T, bool>> predicate);
+        Task<T> GetByPredicate(Expression<Func<T, bool>> predicate);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(int id);

@@ -30,6 +30,11 @@ namespace Subastas.Interfaces
             return await _dbSet.AnyAsync(predicate);
         }
 
+        public async Task<T> GetByPredicate(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
+
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
