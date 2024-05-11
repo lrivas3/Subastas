@@ -1,4 +1,4 @@
-﻿namespace Subastas.BAL.Services
+﻿namespace Subastas.Services
 {
     public class UsersService
     {

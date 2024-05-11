@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subastas.DAL\Subastas.Database.csproj" />
+    <ProjectReference Include="..\Subastas.Database\Subastas.Database.csproj" />
     <ProjectReference Include="..\Subastas.Interfaces\Subastas.Interfaces.csproj" />
   </ItemGroup>
 

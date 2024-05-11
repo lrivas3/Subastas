@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Database;
+using System.Linq.Expressions;
 
-namespace Subastas.Interfaces.Repositories
+namespace Subastas.Interfaces
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
@@ -22,6 +23,11 @@ namespace Subastas.Interfaces.Repositories
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<bool> ExistsByPredicate(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
         }
 
         public async Task AddAsync(T entity)

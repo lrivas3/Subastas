@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subastas.Interfaces\Subastas.Interfaces.csproj" />
     <ProjectReference Include="..\Subastas.Repositories\Subastas.Repositories.csproj" />
   </ItemGroup>
 
