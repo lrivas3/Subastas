@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Subastas.DAL.Models.Subasta>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <img src="@item.ImagenSubasta" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.TituloSubasta</h5>
+                            <p class="card-text">Monto Inicial: @item.MontoInicial</p>
+                            <p class="card-text">Activo: @item.EstaActivo</p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Details", new { id = item.IdSubasta })" class="btn btn-primary">Details</a>
+                                <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-secondary" >Edit</a>
+                                <a href="@Url.Action("Delete", new { id = item.IdSubasta })" class="btn btn-danger" >Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+</html>
