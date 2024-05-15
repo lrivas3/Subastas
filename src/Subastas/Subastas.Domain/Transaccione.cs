@@ -10,6 +10,8 @@ public partial class Transaccione
 
     public bool EsAFavor { get; set; }
 
+    public bool EstaActivo { get; set; }
+
     public int IdCuenta { get; set; }
 
     public virtual Cuentum IdCuentaNavigation { get; set; } = null!;
