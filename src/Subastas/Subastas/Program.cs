@@ -1,5 +1,6 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Subastas.DAL;
+using Subastas.Database;
 
 namespace Subastas
 {
@@ -13,6 +14,14 @@ namespace Subastas
             builder.Services.AddControllersWithViews();
             
             builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SubastasConnectionString")));
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddCookie("Bearer", o =>
+                {
+                    o.LoginPath = "/Home/Login";
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                    o.AccessDeniedPath = "/Home/Index";
+                });
 
             var app = builder.Build();
 
@@ -30,6 +39,7 @@ namespace Subastas
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllerRoute(
                 name: "default",

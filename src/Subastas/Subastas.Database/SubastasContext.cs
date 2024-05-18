@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Subastas.DAL.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 
-namespace Subastas.DAL;
+namespace Subastas.Database;
 
 public partial class SubastasContext : DbContext
 {
@@ -24,6 +22,8 @@ public partial class SubastasContext : DbContext
 
     public virtual DbSet<Permiso> Permisos { get; set; }
 
+    public virtual DbSet<Producto> Productos { get; set; }
+
     public virtual DbSet<Puja> Pujas { get; set; }
 
     public virtual DbSet<RolPermiso> RolPermisos { get; set; }
@@ -39,21 +39,24 @@ public partial class SubastasContext : DbContext
     public virtual DbSet<UsuarioRol> UsuarioRols { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    {        
         modelBuilder.Entity<Cuentum>(entity =>
         {
             entity.HasKey(e => e.IdCuenta);
 
             entity.ToTable("cuenta", "subastas");
 
+            entity.HasIndex(e => e.IdUsuario, "unique_id_usuario").IsUnique();
+
             entity.Property(e => e.IdCuenta).HasColumnName("id_cuenta");
+            entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.Saldo)
                 .HasColumnType("decimal(8, 2)")
                 .HasColumnName("saldo");
 
-            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Cuenta)
-                .HasForeignKey(d => d.IdUsuario)
+            entity.HasOne(d => d.IdUsuarioNavigation).WithOne(p => p.Cuentum)
+                .HasForeignKey<Cuentum>(d => d.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_cuenta_usuarios");
         });
@@ -117,6 +120,29 @@ public partial class SubastasContext : DbContext
                 .HasForeignKey(d => d.IdMenu)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_permisos_menus");
+        });
+
+        modelBuilder.Entity<Producto>(entity =>
+        {
+            entity.HasKey(e => e.IdProducto);
+
+            entity.ToTable("productos", "subastas");
+
+            entity.Property(e => e.IdProducto).HasColumnName("id_producto");
+            entity.Property(e => e.DescripcionProducto)
+                .HasMaxLength(40)
+                .IsUnicode(false)
+                .HasColumnName("descripcion_producto");
+            entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
+            entity.Property(e => e.EstaSubastado).HasColumnName("esta_subastado");
+            entity.Property(e => e.ImagenProducto)
+                .HasMaxLength(40)
+                .IsUnicode(false)
+                .HasColumnName("imagen_producto");
+            entity.Property(e => e.NombreProducto)
+                .HasMaxLength(40)
+                .IsUnicode(false)
+                .HasColumnName("nombre_producto");
         });
 
         modelBuilder.Entity<Puja>(entity =>
@@ -185,14 +211,15 @@ public partial class SubastasContext : DbContext
 
             entity.ToTable("subastas", "subastas");
 
+            entity.HasIndex(e => e.IdProducto, "unique_id_producto").IsUnique();
+
             entity.Property(e => e.IdSubasta).HasColumnName("id_subasta");
             entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.FechaSubasta).HasColumnName("fecha_subasta");
+            entity.Property(e => e.FechaSubastaFin).HasColumnName("fecha_subasta_fin");
+            entity.Property(e => e.Finalizada).HasColumnName("finalizada");
+            entity.Property(e => e.IdProducto).HasColumnName("id_producto");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
-            entity.Property(e => e.ImagenSubasta)
-                .HasMaxLength(40)
-                .IsUnicode(false)
-                .HasColumnName("imagen_subasta");
             entity.Property(e => e.MontoInicial)
                 .HasColumnType("decimal(8, 2)")
                 .HasColumnName("monto_inicial");
@@ -200,6 +227,11 @@ public partial class SubastasContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("titulo_subasta");
+
+            entity.HasOne(d => d.IdProductoNavigation).WithOne(p => p.Subasta)
+                .HasForeignKey<Subasta>(d => d.IdProducto)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_subastas_producto");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Subasta)
                 .HasForeignKey(d => d.IdUsuario)
@@ -214,6 +246,7 @@ public partial class SubastasContext : DbContext
 
             entity.Property(e => e.IdTransaccion).HasColumnName("id_transaccion");
             entity.Property(e => e.EsAFavor).HasColumnName("es_a_favor");
+            entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.FechaTransaccion).HasColumnName("fecha_transaccion");
             entity.Property(e => e.IdCuenta).HasColumnName("id_cuenta");
             entity.Property(e => e.MontoTransaccion)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Subastas.DAL.Models;
+﻿namespace Subastas.Domain;
 
 public partial class Subasta
 {
@@ -13,11 +10,17 @@ public partial class Subasta
 
     public DateOnly FechaSubasta { get; set; }
 
+    public DateOnly FechaSubastaFin { get; set; }
+
+    public bool Finalizada { get; set; }
+
     public bool EstaActivo { get; set; }
 
-    public string ImagenSubasta { get; set; } = null!;
-
     public int? IdUsuario { get; set; }
+
+    public int IdProducto { get; set; }
+
+    public virtual Producto IdProductoNavigation { get; set; } = null!;
 
     public virtual Usuario? IdUsuarioNavigation { get; set; }
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Subastas.DAL.Models;
+﻿namespace Subastas.Domain;
 
 public partial class Transaccione
 {
@@ -12,6 +9,8 @@ public partial class Transaccione
     public DateOnly FechaTransaccion { get; set; }
 
     public bool EsAFavor { get; set; }
+
+    public bool EstaActivo { get; set; }
 
     public int IdCuenta { get; set; }
 

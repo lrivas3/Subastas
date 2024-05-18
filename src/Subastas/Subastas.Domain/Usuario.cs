@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Subastas.DAL.Models;
+﻿namespace Subastas.Domain;
 
 public partial class Usuario
 {
@@ -17,7 +14,7 @@ public partial class Usuario
 
     public bool EstaActivo { get; set; }
 
-    public virtual ICollection<Cuentum> Cuenta { get; set; } = new List<Cuentum>();
+    public virtual Cuentum? Cuentum { get; set; }
 
     public virtual ICollection<ParticipantesSubastum> ParticipantesSubasta { get; set; } = new List<ParticipantesSubastum>();
 
