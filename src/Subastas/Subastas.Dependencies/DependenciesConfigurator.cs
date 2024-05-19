@@ -23,6 +23,8 @@ namespace Subastas.Dependencies
             services.AddScoped<IRolRepository, RolRepository>();
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<IEncryptionService, EncryptionService>();
+            services.AddScoped<IPermisoRepository, PermisoRepository>();
+            services.AddScoped<IPermisoService, PermisoService>();
 
             return services;
         }
