@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Subastas.Interfaces;
 using Subastas.Domain;
+using Subastas.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace Subastas.Seed.Users
@@ -8,17 +8,21 @@ namespace Subastas.Seed.Users
     public class CreateUsers : IClassFixture<TestFixture>
     {
         private readonly IUserService userService;
+        private readonly IRolService rolService;
         private readonly IEncryptionService encrypManager;
 
         public CreateUsers(TestFixture fixture)
         {
+            rolService = fixture.ServiceProvider.GetService<IRolService>();
             userService = fixture.ServiceProvider.GetService<IUserService>();
             encrypManager = fixture.ServiceProvider.GetService<IEncryptionService>();
         }
 
         [Fact]
-        public async Task CreateUsersSeed()
+        public async Task CreateAdminUsersSeed()
         {
+            var adminRole = await rolService.GetByNameAsync("Admin");
+
             var Alexis = await userService.CreateIfNotExistsAsync(new Usuario
             {
                 CorreoUsuario = "ia.alexismartinez@ufg.edu.sv",
@@ -30,7 +34,15 @@ namespace Subastas.Seed.Users
                     EstaActivo = true
                 },
                 EstaActivo = true,
-                Password = encrypManager.Encrypt("MiContraseñaEnEntronoDev"),
+                Password = encrypManager.Encrypt("MiContraseñaEnEntornoDev"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = adminRole.IdRol
+                    }
+                }
             });
 
             Assert.NotNull(Alexis);

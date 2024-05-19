@@ -20,6 +20,8 @@ namespace Subastas.Dependencies
             // Configurar tus servicios aquí
             services.AddScoped<IUserService, UsersService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRolRepository, RolRepository>();
+            services.AddScoped<IRolService, RolService>();
             services.AddScoped<IEncryptionService, EncryptionService>();
 
             return services;
