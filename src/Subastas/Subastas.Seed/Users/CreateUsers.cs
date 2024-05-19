@@ -87,9 +87,31 @@ namespace Subastas.Seed.Users
                     }
                 }
             });
+
+            var guillermo = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "ia.minero@ufg.edu.sv",
+                NombreUsuario = "Guillermo",
+                ApellidoUsuario = "Minero",
+                Cuentum = new Cuentum
+                {
+                    Saldo = 1000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("contra123"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = adminRole.IdRol
+                    }
+                }
+            });
+
             
-            Assert.NotNull(Alexis);
-            Assert.True(emerson != null && Alexis != null && Alfredo != null);
+            Assert.True(emerson != null && Alexis != null && Alfredo != null && guillermo != null);
         }
     }
 }
