@@ -16,11 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Subasta.Managers\Subasta.Managers.csproj" />
-    <ProjectReference Include="..\Subastas.Filters\Subastas.Filters.csproj" />
+    <ProjectReference Include="..\Subastas.Dependencies\Subastas.Dependencies.csproj" />
     <ProjectReference Include="..\Subastas.Interfaces\Subastas.Interfaces.csproj" />
-    <ProjectReference Include="..\Subastas.Repositories\Subastas.Repositories.csproj" />
-    <ProjectReference Include="..\Subastas.Services\Subastas.Services.csproj" />
   </ItemGroup>
 
 </Project>

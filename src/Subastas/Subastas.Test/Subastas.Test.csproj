@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Subastas.TestFixture\Subastas.TestFixture.csproj" />
+  </ItemGroup>
+
 </Project>

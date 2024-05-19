@@ -6,7 +6,7 @@ namespace Subastas.Interfaces
     {
         Task<IEnumerable<Usuario>> GetAll();
         Task<Usuario> Create(Usuario newUsuario);
-        Task<Usuario> CreateIfNotExists(Usuario newUsuario);
+        Task<Usuario> CreateIfNotExistsAsync(Usuario newUsuario);
         Task<bool> ExistsById(int usuario);
         Task<bool> ExistsByCorreo(string correo);
         Task<Usuario> GetById(int usuario);
