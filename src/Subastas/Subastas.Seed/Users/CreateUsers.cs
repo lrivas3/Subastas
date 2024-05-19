@@ -44,6 +44,27 @@ namespace Subastas.Seed.Users
                     }
                 }
             });
+            var Alfredo = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "ia.alfredoam@ufg.edu.sv",
+                NombreUsuario = "Alfredo",
+                ApellidoUsuario = "Alas",
+                Cuentum = new Cuentum
+                {
+                    Saldo = 1000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("mipass"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = adminRole.IdRol
+                    }
+                }
+            });
 
             Assert.NotNull(Alexis);
         }
