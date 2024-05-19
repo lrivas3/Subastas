@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Subastas.Database;
+using Subastas.Interfaces;
+using Subastas.Repositories;
+using Subastas.Services;
 
 namespace Subastas
 {
@@ -22,6 +25,9 @@ namespace Subastas
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                     o.AccessDeniedPath = "/Home/Index";
                 });
+
+            builder.Services.AddScoped<IUserService, UsersService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             var app = builder.Build();
 

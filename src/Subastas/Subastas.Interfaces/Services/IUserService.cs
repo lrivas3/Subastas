@@ -4,6 +4,7 @@ namespace Subastas.Interfaces
 {
     public interface IUserService 
     {
+        Task<IEnumerable<Usuario>> GetAll();
         Task<Usuario> Create(Usuario newUsuario);
         Task<Usuario> CreateIfNotExists(Usuario newUsuario);
         Task<bool> ExistsById(int usuario);
