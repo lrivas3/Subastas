@@ -1,7 +1,6 @@
 ﻿@model Subastas.Domain.Subasta
 
 @{
-    Layout = null;
 }
 
 <!DOCTYPE html>
@@ -13,7 +12,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-
+    
     <div class="container mt-5">
         <div class="row">
             <div class="col-md-6">
@@ -42,6 +41,7 @@
                     </div>
                 </div>
             </div>
+           
             <div class="col-md-6">
                 <h4>Pujas de Usuarios</h4>
                 <hr />
@@ -67,6 +67,14 @@
                 </table>
             </div>
         </div>
+        <div class="row pt-3">
+            <div class="container">
+                <a class="btn btn-primary" asp-controller="Pujas" asp-action="Details" asp-route-id="@Model.IdSubasta">Pujar</a>
+
+                @* @Html.ActionLink("Edit", "Edit", new {  id = Model.IdSubasta }, new { @class = "btn btn-primary" }) *@
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
         <div class="row mt-5">
             <div class="col-md-12">
                 <h4>Participantes de la Subasta</h4>
@@ -87,10 +95,7 @@
         </div>
     </div>
 
-    <div class="container">
-        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }, new { @class = "btn btn-primary" })
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-    </div>
+   
 
 </body>
 </html>

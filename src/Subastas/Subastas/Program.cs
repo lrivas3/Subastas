@@ -17,9 +17,9 @@ namespace Subastas
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Bearer", o =>
                 {
-                    o.LoginPath = "/Home/Index";
+                    o.LoginPath = "/Login/Index";
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    o.AccessDeniedPath = "/Home/Index";
+                    o.AccessDeniedPath = "/Login/Index";
                 });
 
             var app = builder.Build();

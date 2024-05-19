@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Subastas.Database;
 
@@ -8,6 +9,7 @@ namespace Subastas.Controllers
     public class UsuarioController(SubastasContext _context) : Controller
     {
         // GET: UsuarioController
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
         public ActionResult Index()
         {
             var listaUsuario = _context.Usuarios.ToList();

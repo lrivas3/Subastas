@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Subastas.Dependencies\Subastas.Dependencies.csproj" />
+    <ProjectReference Include="..\Subastas.Domain\Subastas.Domain.csproj" />
     <ProjectReference Include="..\Subastas.Interfaces\Subastas.Interfaces.csproj" />
   </ItemGroup>
 
