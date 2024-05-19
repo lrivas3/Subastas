@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Subastas.Database;
 
@@ -11,9 +12,11 @@ using Subastas.Database;
 namespace Subastas.Database.Migrations
 {
     [DbContext(typeof(SubastasContext))]
-    partial class SubastasContextModelSnapshot : ModelSnapshot
+    [Migration("20240519214036_id menu padre allows null")]
+    partial class idmenupadreallowsnull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace Subastas.Database.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("esta_activo");
 
-                    b.Property<int?>("IdMenuPadre")
+                    b.Property<int>("IdMenuPadre")
                         .HasColumnType("int")
                         .HasColumnName("id_menu_padre");
 

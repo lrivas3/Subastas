@@ -23,6 +23,9 @@ namespace Subastas.Services
             if (newRole.IdRol > 0 && await ExistsByIdAsync(newRole.IdRol))
                 return await GetByIdAsync(newRole.IdRol);
 
+            if (!string.IsNullOrEmpty(newRole.NombreRol) && await ExistsByNameAsync(newRole.NombreRol))
+                return await GetByNameAsync(newRole.NombreRol);
+
             return await CreateAsync(newRole);
         }
 

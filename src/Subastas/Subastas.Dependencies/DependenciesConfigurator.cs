@@ -25,6 +25,8 @@ namespace Subastas.Dependencies
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<IPermisoRepository, PermisoRepository>();
             services.AddScoped<IPermisoService, PermisoService>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IMenuService, MenuService>();
 
             return services;
         }

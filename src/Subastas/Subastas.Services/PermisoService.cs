@@ -6,6 +6,11 @@ namespace Subastas.Services
 {
     public class PermisoService(IPermisoRepository permisoRepository) : IPermisoService
     {
+        public async Task<IEnumerable<Permiso>> GetAllAsync()
+        {
+            return await permisoRepository.GetAllAsync();
+        }
+
         public async Task<Permiso> CreateAsync(Permiso newPermiso)
         {
             if (newPermiso == null)
@@ -23,6 +28,9 @@ namespace Subastas.Services
 
             if (newPermiso.IdPermiso > 0 && await ExistsByIdAsync(newPermiso.IdPermiso))
                 return await GetByIdAsync(newPermiso.IdPermiso);
+
+            if (!string.IsNullOrEmpty(newPermiso.NombrePermiso) && await ExistsByNameAsync(newPermiso.NombrePermiso))
+                return await GetByNameAsync(newPermiso.NombrePermiso);
 
             return await CreateAsync(newPermiso);
         }

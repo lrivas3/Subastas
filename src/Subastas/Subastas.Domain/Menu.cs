@@ -8,7 +8,7 @@ public partial class Menu
 
     public bool EstaActivo { get; set; }
 
-    public int IdMenuPadre { get; set; }
+    public int? IdMenuPadre { get; set; }
 
     public virtual Menu IdMenuPadreNavigation { get; set; } = null!;
 

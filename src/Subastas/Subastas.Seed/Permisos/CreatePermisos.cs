@@ -7,10 +7,12 @@ namespace Subastas.Seed.Permisos
     public class CreatePermisos : IClassFixture<TestFixture>
     {
         private readonly IPermisoService permisoService;
+        private readonly IMenuService menuService;
 
         public CreatePermisos(TestFixture fixture)
         {
             permisoService = fixture.ServiceProvider.GetService<IPermisoService>();
+            menuService = fixture.ServiceProvider.GetService<IMenuService>();
         }
 
         [Fact]
@@ -21,32 +23,39 @@ namespace Subastas.Seed.Permisos
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Login"
+                    NombrePermiso = "Login",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Authentication")
                 }),
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Logout"
+                    NombrePermiso = "Logout",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Authentication")
+
                 }),
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Create_Subastas"
+                    NombrePermiso = "Create_Subastas",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Subastas")
                 }),
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Add_Subastas"
+                    NombrePermiso = "Add_Subastas",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Subastas")
                 }),
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Edit_Subastas"
+                    NombrePermiso = "Edit_Subastas",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Subastas")
                 }),
                 await permisoService.CreateIfNotExistsAsync(new Permiso
                 {
                     EstaActivo = true,
-                    NombrePermiso = "Delete_Subastas"
+                    NombrePermiso = "Delete_Subastas",
+                    IdMenuNavigation = await menuService.GetByNameAsync("Subastas")
                 })
             };
 
