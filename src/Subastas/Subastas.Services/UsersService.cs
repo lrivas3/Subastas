@@ -5,11 +5,6 @@ namespace Subastas.Services
 {
     public class UsersService(IUserRepository userRepo) : IUserService
     {
-        public async Task<IEnumerable<Usuario>> Get()
-        {
-            return await userRepo.GetAllAsync();
-        }
-
         public async Task<Usuario> Create(Usuario newUsuario)
         {
             if (newUsuario == null)
