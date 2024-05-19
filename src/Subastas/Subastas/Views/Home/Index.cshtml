@@ -22,3 +22,9 @@
         @ViewData["Error"]
     </div>
 }
+@if (ViewData["exit"] != null)
+{
+    <div class="alert alert-success">
+        @ViewData["exit"]
+    </div>
+}

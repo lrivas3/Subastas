@@ -44,6 +44,19 @@ namespace Subastas.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("logout")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(JwtBearerDefaults.AuthenticationScheme);
+
+            // Opcional: añadir el token a una lista de revocación aquí
+            ViewData["exit"] = "Se cerro la sesión.";
+            return View("Index");
+        }
+
         [Authorize(AuthenticationSchemes= "Bearer", Roles ="admin")]
         public IActionResult Privacy()
         {

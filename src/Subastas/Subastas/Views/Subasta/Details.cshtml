@@ -1,4 +1,4 @@
-﻿@model Subastas.DAL.Models.Subasta
+﻿@model Subastas.Domain.Subasta
 
 @{
     Layout = null;
@@ -23,7 +23,7 @@
                     <div class="card">
                         <div class="row no-gutters">
                             <div class="col-md-3">
-                                <img src="@Model.ImagenSubasta" class="card-img" alt="Imagen de la Subasta">
+                                <img src="@Model?.IdProductoNavigation?.ImagenProducto" class="card-img" alt="Imagen de la Subasta">
                             </div>
                             <div class="col-md-9">
                                 <div class="card-body">
