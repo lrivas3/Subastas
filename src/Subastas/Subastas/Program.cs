@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Subastas.Database;
+using Subastas.Dependencies;
 
 namespace Subastas
 {
@@ -12,8 +11,8 @@ namespace Subastas
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            
-            builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SubastasConnectionString")));
+
+            builder.Services.ConfigureServices(builder.Configuration);
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Bearer", o =>

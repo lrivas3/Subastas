@@ -60,6 +60,12 @@ namespace Subastas.Controllers
         [Authorize(AuthenticationSchemes= "Bearer", Roles ="admin")]
         public IActionResult Privacy()
         {
+            var claims = User.Claims.Select(c => new
+            {
+                Type = c.Type,
+                Value = c.Value
+            }).ToList();
+
             return View();
         }
 

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Subasta.Managers\Subasta.Managers.csproj" />
+    <ProjectReference Include="..\Subastas.Database\Subastas.Database.csproj" />
+    <ProjectReference Include="..\Subastas.Interfaces\Subastas.Interfaces.csproj" />
+    <ProjectReference Include="..\Subastas.Repositories\Subastas.Repositories.csproj" />
+    <ProjectReference Include="..\Subastas.Services\Subastas.Services.csproj" />
+  </ItemGroup>
+
+</Project>
