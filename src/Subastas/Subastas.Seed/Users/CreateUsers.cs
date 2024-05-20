@@ -110,8 +110,29 @@ namespace Subastas.Seed.Users
                 }
             });
 
-            
-            Assert.True(emerson != null && Alexis != null && Alfredo != null && guillermo != null);
+            var Lisbeth = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "ia.lisbethargueta@ufg.edu.sv",
+                NombreUsuario = "Lisbeth",
+                ApellidoUsuario = "Argueta",
+                Cuentum = new Cuentum
+                {
+                    Saldo = 5000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("contraLisbeth"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = adminRole.IdRol
+                    }
+                }
+            });
+
+            Assert.True(emerson != null && Alexis != null && Alfredo != null && guillermo != null && Lisbeth != null);
         }
     }
 }
