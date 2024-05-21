@@ -17,9 +17,9 @@ namespace Subastas
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Bearer", o =>
                 {
-                    o.LoginPath = "/Home/Login";
+                    o.LoginPath = "/Login/Index";
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    o.AccessDeniedPath = "/Home/Index";
+                    o.AccessDeniedPath = "/Login/Index";
                 });
 
             var app = builder.Build();
@@ -42,7 +42,7 @@ namespace Subastas
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Login}/{action=Index}/{id?}");
 
             app.Run();
         }

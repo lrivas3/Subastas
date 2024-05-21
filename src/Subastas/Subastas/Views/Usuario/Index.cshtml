@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Subastas.Domain.Usuario>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Index</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Usuarios</h2>
+        <p>
+            <a class="btn btn-primary" asp-action="Create">Create New</a>
+        </p>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.IdUsuario)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NombreUsuario)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ApellidoUsuario)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.CorreoUsuario)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Password)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EstaActivo)
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdUsuario)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NombreUsuario)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ApellidoUsuario)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CorreoUsuario)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Password)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EstaActivo)
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdUsuario">Edit</a>
+                            <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.IdUsuario">Details</a>
+                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

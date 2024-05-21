@@ -1,0 +1,61 @@
+﻿@model Subastas.Domain.Puja
+
+@{
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Puja</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h4 class="mb-3">Detalles de Puja</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="Details">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <div class="form-group">
+                        <label asp-for="IdSubasta" class="control-label"></label>
+                        <input asp-for="IdSubasta" class="form-control" />
+                        <span asp-validation-for="IdSubasta" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MontoPuja" class="control-label"></label>
+                        <input asp-for="MontoPuja" class="form-control" />
+                        <span asp-validation-for="MontoPuja" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IdUsuario" class="control-label"></label>
+                        <input asp-for="IdUsuario" class="form-control" />
+                        <span asp-validation-for="IdUsuario" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex align-items-center">
+                        <input type="submit" value="Pujar" class="btn btn-primary mr-2" />
+                        <a class="btn btn-danger" asp-controller="Subasta" asp-action="Details" asp-route-id="@Model.IdSubasta">Cancelar</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

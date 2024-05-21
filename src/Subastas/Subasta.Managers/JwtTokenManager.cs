@@ -24,7 +24,8 @@ namespace Subastas.Managers
                 Subject = new ClaimsIdentity(new[]
                         {
                             new Claim(ClaimTypes.Name, username),
-                            new Claim(ClaimTypes.Role, "admin")
+                            new Claim(ClaimTypes.Role, "admin"),
+                            new Claim("idUser","2")
                         }),
 
                 Expires = now.AddMinutes(Convert.ToInt32(expireMinutes)),
