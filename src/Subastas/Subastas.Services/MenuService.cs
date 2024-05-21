@@ -1,6 +1,5 @@
 ﻿using Subastas.Domain;
 using Subastas.Interfaces;
-using Subastas.Repositories;
 
 namespace Subastas.Services
 {
@@ -37,12 +36,12 @@ namespace Subastas.Services
 
         public async Task<bool> ExistsByIdAsync(int idMenu)
         {
-            return await menuRepository.ExistsByPredicate(r => r.IdMenu.Equals(idMenu));
+            return await menuRepository.ExistsByPredicate(m => m.IdMenu.Equals(idMenu));
         }
 
         public async Task<bool> ExistsByNameAsync(string MenuName)
         {
-            return await menuRepository.ExistsByPredicate(r => r.NombreMenu == MenuName);
+            return await menuRepository.ExistsByPredicate(m => m.NombreMenu == MenuName);
         }
 
         public async Task<Menu> GetByIdAsync(int idMenu)
@@ -52,7 +51,7 @@ namespace Subastas.Services
 
         public async Task<Menu> GetByNameAsync(string MenuName)
         {
-            return await menuRepository.GetByPredicate(r => r.NombreMenu == MenuName);
+            return await menuRepository.GetByPredicate(m => m.NombreMenu == MenuName);
         }
     }
 }
