@@ -5,6 +5,11 @@ namespace Subastas.Services
 {
     public class RolService(IRolRepository rolRepository) : IRolService
     {
+        public async Task<IEnumerable<Role>> GetAllAsync()
+        {
+            return await rolRepository.GetAllAsync();
+        }
+
         public async Task<Role> CreateAsync(Role newRole)
         {
             if (newRole == null)

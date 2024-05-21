@@ -1,6 +1,6 @@
 ﻿namespace Subastas.Domain;
 
-public partial class Cuentum
+public partial class Cuenta
 {
     public int IdCuenta { get; set; }
 
@@ -12,5 +12,5 @@ public partial class Cuentum
 
     public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
 
-    public virtual ICollection<Transaccione> Transacciones { get; set; } = new List<Transaccione>();
+    public virtual ICollection<Transaccion> Transacciones { get; set; } = new List<Transaccion>();
 }

@@ -4,6 +4,7 @@ namespace Subastas.Interfaces
 {
     public interface IMenuService
     {
+        Task<IEnumerable<Menu>> GetAllAsync();
         Task<Menu> CreateAsync(Menu newMenu);
         Task<Menu> CreateIfNotExistsAsync(Menu newMenu);
         Task<bool> ExistsByIdAsync(int idMenu);

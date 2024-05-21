@@ -28,7 +28,7 @@ namespace Subastas.Seed.Users
                 CorreoUsuario = "ia.alexismartinez@ufg.edu.sv",
                 NombreUsuario = "Alexis",
                 ApellidoUsuario = "Martínez",
-                Cuentum = new Cuentum
+                Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
@@ -49,7 +49,7 @@ namespace Subastas.Seed.Users
                 CorreoUsuario = "ia.alfredoam@ufg.edu.sv",
                 NombreUsuario = "Alfredo",
                 ApellidoUsuario = "Alas",
-                Cuentum = new Cuentum
+                Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
@@ -71,7 +71,7 @@ namespace Subastas.Seed.Users
                 CorreoUsuario = "ia.leonardorivas@ufg.edu.sv",
                 NombreUsuario = "Emerson",
                 ApellidoUsuario = "Rivas",
-                Cuentum = new Cuentum
+                Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
@@ -93,7 +93,7 @@ namespace Subastas.Seed.Users
                 CorreoUsuario = "ia.minero@ufg.edu.sv",
                 NombreUsuario = "Guillermo",
                 ApellidoUsuario = "Minero",
-                Cuentum = new Cuentum
+                Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
@@ -115,7 +115,7 @@ namespace Subastas.Seed.Users
                 CorreoUsuario = "ia.lisbethargueta@ufg.edu.sv",
                 NombreUsuario = "Lisbeth",
                 ApellidoUsuario = "Argueta",
-                Cuentum = new Cuentum
+                Cuentum = new Cuenta
                 {
                     Saldo = 5000.00M,
                     EstaActivo = true

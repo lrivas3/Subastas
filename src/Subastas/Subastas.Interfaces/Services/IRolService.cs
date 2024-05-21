@@ -4,6 +4,7 @@ namespace Subastas.Interfaces
 {
     public interface IRolService
     {
+        Task<IEnumerable<Role>> GetAllAsync();
         Task<Role> CreateAsync(Role newRole);
         Task<Role> CreateIfNotExistsAsync(Role newRole);
         Task<bool> ExistsByIdAsync(int idRol);

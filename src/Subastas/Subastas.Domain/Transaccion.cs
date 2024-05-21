@@ -1,6 +1,6 @@
 ﻿namespace Subastas.Domain;
 
-public partial class Transaccione
+public partial class Transaccion
 {
     public int IdTransaccion { get; set; }
 
@@ -14,5 +14,5 @@ public partial class Transaccione
 
     public int IdCuenta { get; set; }
 
-    public virtual Cuentum IdCuentaNavigation { get; set; } = null!;
+    public virtual Cuenta IdCuentaNavigation { get; set; } = null!;
 }
