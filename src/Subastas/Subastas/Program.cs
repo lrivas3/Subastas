@@ -42,7 +42,7 @@ namespace Subastas
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Authentication}/{action=Login}/{id?}");
+                pattern: "{controller=Subasta}/{action=Index}/{id?}");
 
             app.Run();
         }
