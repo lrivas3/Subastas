@@ -1,9 +1,10 @@
-﻿using Subastas.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 using Subastas.Interfaces;
 
 namespace Subastas.Services
 {
-    public class SubastaService(ISubastaRepository subastaRepository) : ISubastasService
+    public class SubastaService(ISubastaRepository subastaRepository) : ISubastaService
     {
         public async Task<Subasta> CreateAsync(Subasta newSubasta)
         {
@@ -36,7 +37,7 @@ namespace Subastas.Services
 
         public async Task<bool> ExistsByTituloSubastaAsync(string tituloSubasta)
         {
-            return await subastaRepository.ExistsByPredicate(m => m.TituloSubasta.Equals(tituloSubasta));
+            return await subastaRepository.ExistsByPredicate(m => EF.Functions.Like(m.TituloSubasta, tituloSubasta));
         }
 
         public async Task<IEnumerable<Subasta>> GetAllAsync()
@@ -51,7 +52,21 @@ namespace Subastas.Services
 
         public async Task<Subasta> GetByTituloSubastaAsync(string tituloSubasta)
         {
-            return await subastaRepository.GetByPredicate(m => m.TituloSubasta.Equals(tituloSubasta));
+            return await subastaRepository.GetByPredicate(m => EF.Functions.Like(m.TituloSubasta, tituloSubasta));
+        }
+
+        public async Task<bool> DeleteById(int idSubasta)
+        {
+            try
+            {
+                await subastaRepository.DeleteAsync(idSubasta);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
         }
     }
 }

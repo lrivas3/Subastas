@@ -1,4 +1,5 @@
-﻿using Subastas.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 using Subastas.Interfaces;
 
 namespace Subastas.Services
@@ -41,7 +42,7 @@ namespace Subastas.Services
 
         public async Task<bool> ExistsByNameAsync(string roleName)
         {
-            return await rolRepository.ExistsByPredicate(r => r.NombreRol == roleName);
+            return await rolRepository.ExistsByPredicate(r => EF.Functions.Like(r.NombreRol, roleName));
         }
 
         public async Task<Role> GetByIdAsync(int idRol)
@@ -51,7 +52,21 @@ namespace Subastas.Services
 
         public async Task<Role> GetByNameAsync(string roleName)
         {
-            return await rolRepository.GetByPredicate(r=>r.NombreRol == roleName);
+            return await rolRepository.GetByPredicate(r=> EF.Functions.Like(r.NombreRol, roleName));
+        }
+
+        public async Task<bool> DeleteById(int idRol)
+        {
+            try
+            {
+                await rolRepository.DeleteAsync(idRol);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
         }
     }
 }

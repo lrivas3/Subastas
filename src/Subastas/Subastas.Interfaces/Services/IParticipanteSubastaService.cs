@@ -9,5 +9,6 @@ namespace Subastas.Interfaces
         Task<ParticipantesSubasta> CreateIfNotExistsAsync(ParticipantesSubasta newParticipantesSubasta);
         Task<bool> ExistsBySubastaIdAndUserIdAsync(int idSubasta, int idUsuario);
         Task<ParticipantesSubasta> GetBySubastaIdAndUserIdAsync(int idSubasta, int idUsuario);
+        Task<bool> DeleteBySubastaIdAndUserId(int idSubasta, int idUsuario);
     }
 }

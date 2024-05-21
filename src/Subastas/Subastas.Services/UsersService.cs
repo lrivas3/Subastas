@@ -54,5 +54,19 @@ namespace Subastas.Services
         {
             return await userRepo.GetByIdAsync(usuario);
         }
+
+        public async Task<bool> DeleteById(int idUsuario)
+        {
+            try
+            {
+                await userRepo.DeleteAsync(idUsuario);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
+        }
     }
 }

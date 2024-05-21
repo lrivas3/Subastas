@@ -11,5 +11,6 @@ namespace Subastas.Interfaces
         Task<bool> ExistsByUserIdAsync(int idUsuario);
         Task<Cuenta> GetByIdAsync(int idCuenta);
         Task<Cuenta> GetByUserIdAsync(int idUsuario);
+        Task<bool> DeleteById(int idCuenta);
     }
 }

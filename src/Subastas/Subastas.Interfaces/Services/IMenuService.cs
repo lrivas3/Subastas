@@ -11,5 +11,6 @@ namespace Subastas.Interfaces
         Task<bool> ExistsByNameAsync(string menuName);
         Task<Menu> GetByIdAsync(int idMenu);
         Task<Menu> GetByNameAsync(string menuName);
+        Task<bool> DeleteById(int idMenu);
     }
 }

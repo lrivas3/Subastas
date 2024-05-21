@@ -41,5 +41,19 @@ namespace Subastas.Services
         {
             return await participanteSubastaRepository.GetByPredicate(pS => pS.IdSubasta == idSubasta && pS.IdUsuario == idUsuario);
         }
+
+        public async Task<bool> DeleteBySubastaIdAndUserId(int idSubasta, int idUsuario)
+        {
+            try
+            {
+                await participanteSubastaRepository.DeleteBySubastaIdAndUserIdAsync(idSubasta, idUsuario);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
+        }
     }
 }

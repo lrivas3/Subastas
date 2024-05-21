@@ -1,4 +1,5 @@
-﻿using Subastas.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 using Subastas.Interfaces;
 
 namespace Subastas.Services
@@ -41,7 +42,7 @@ namespace Subastas.Services
 
         public async Task<bool> ExistsByNameAsync(string permisoName)
         {
-            return await permisoRepository.ExistsByPredicate(p => p.NombrePermiso == permisoName);
+            return await permisoRepository.ExistsByPredicate(p => EF.Functions.Like(p.NombrePermiso, permisoName));
         }
 
         public async Task<Permiso> GetByIdAsync(int idPermiso)
@@ -51,7 +52,21 @@ namespace Subastas.Services
 
         public async Task<Permiso> GetByNameAsync(string permisoName)
         {
-            return await permisoRepository.GetByPredicate(p => p.NombrePermiso == permisoName);
+            return await permisoRepository.GetByPredicate(p => EF.Functions.Like(p.NombrePermiso, permisoName));
+        }
+
+        public async Task<bool> DeleteById(int idPermiso)
+        {
+            try
+            {
+                await permisoRepository.DeleteAsync(idPermiso);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
         }
     }
 }

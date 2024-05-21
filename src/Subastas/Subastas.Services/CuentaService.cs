@@ -53,5 +53,19 @@ namespace Subastas.Services
         {
             return await cuentaRepository.GetByPredicate(c => c.IdUsuario.Equals(idUsuario));
         }
+
+        public async Task<bool> DeleteById(int idCuenta)
+        {
+            try
+            {
+                await cuentaRepository.DeleteAsync(idCuenta);
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
+        }
     }
 }

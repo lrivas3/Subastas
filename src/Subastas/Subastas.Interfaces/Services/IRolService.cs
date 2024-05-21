@@ -11,5 +11,6 @@ namespace Subastas.Interfaces
         Task<bool> ExistsByNameAsync(string roleName);
         Task<Role> GetByIdAsync(int idRol);
         Task<Role> GetByNameAsync(string roleName);
+        Task<bool> DeleteById(int idRol);
     }
 }

@@ -7,9 +7,10 @@ namespace Subastas.Interfaces
         Task<IEnumerable<Usuario>> GetAllAsync();
         Task<Usuario> CreateAsync(Usuario newUsuario);
         Task<Usuario> CreateIfNotExistsAsync(Usuario newUsuario);
-        Task<bool> ExistsByIdAsync(int usuario);
+        Task<bool> ExistsByIdAsync(int idUsuario);
         Task<bool> ExistsByCorreoAsync(string correo);
-        Task<Usuario> GetByIdAsync(int usuario);
+        Task<Usuario> GetByIdAsync(int idUsuario);
         Task<Usuario> GetByCorreoAsync(string correo);
+        Task<bool> DeleteById(int idUsuario);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Subastas.Interfaces
 {
-    public interface ISubastasService
+    public interface ISubastaService
     {
         Task<IEnumerable<Subasta>> GetAllAsync();
         Task<Subasta> CreateAsync(Subasta newSubasta);
@@ -11,5 +11,6 @@ namespace Subastas.Interfaces
         Task<bool> ExistsByTituloSubastaAsync(string tituloSubasta);
         Task<Subasta> GetByIdAsync(int idSubasta);
         Task<Subasta> GetByTituloSubastaAsync(string tituloSubasta);
+        Task<bool> DeleteById(int idSubasta);
     }
 }

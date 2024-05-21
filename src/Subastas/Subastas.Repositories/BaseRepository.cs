@@ -55,6 +55,10 @@ namespace Subastas.Interfaces
                 _dbSet.Remove(entity);
                 await _context.SaveChangesAsync();
             }
+            else
+            {
+                throw new KeyNotFoundException($"No se encontro el id {id}");
+            }
         }
     }
 
