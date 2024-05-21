@@ -17,9 +17,9 @@ namespace Subastas
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Bearer", o =>
                 {
-                    o.LoginPath = "/Login/Index";
+                    o.LoginPath = "/Authentication/Login";
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
-                    o.AccessDeniedPath = "/Login/Index";
+                    o.AccessDeniedPath = "/Authentication/Login";
                 });
 
             var app = builder.Build();
@@ -27,7 +27,7 @@ namespace Subastas
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Authentication/Login");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -42,7 +42,7 @@ namespace Subastas
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Login}/{action=Index}/{id?}");
+                pattern: "{controller=Authentication}/{action=Login}/{id?}");
 
             app.Run();
         }

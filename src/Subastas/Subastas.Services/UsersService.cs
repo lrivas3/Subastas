@@ -4,7 +4,7 @@ using Subastas.Interfaces;
 
 namespace Subastas.Services
 {
-    public class UsersService(IUserRepository userRepo) : IUserService
+    public class UsersService(IUserRepository userRepo, IEncryptionService encrypManager, IUsuarioRolService usuarioRolService) : IUserService
     {
         public async Task<IEnumerable<Usuario>> GetAllAsync()
         {
@@ -67,6 +67,20 @@ namespace Subastas.Services
                 // TODO: SAVELOG
                 return false;
             }
+        }
+
+        public async Task<Usuario> GetUserAndRoleByLogin(string correo, string password)
+        {
+            var user = await userRepo.GetByPredicate(u
+                => EF.Functions.Like(u.CorreoUsuario, correo)
+                && EF.Functions.Like(u.Password, encrypManager.Encrypt(password)));
+
+            if (user == null || user.IdUsuario <= 0)
+                return null;
+
+            user.UsuarioRols = await usuarioRolService.GetRolesByUserId(user.IdUsuario);
+
+            return user;
         }
     }
 }

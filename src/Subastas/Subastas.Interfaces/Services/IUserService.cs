@@ -12,5 +12,6 @@ namespace Subastas.Interfaces
         Task<Usuario> GetByIdAsync(int idUsuario);
         Task<Usuario> GetByCorreoAsync(string correo);
         Task<bool> DeleteById(int idUsuario);
+        Task<Usuario> GetUserAndRoleByLogin(string correo, string password);
     }
 }

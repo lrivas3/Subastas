@@ -60,6 +60,36 @@ namespace Subastas.Interfaces
                 throw new KeyNotFoundException($"No se encontro el id {id}");
             }
         }
+
+        public async Task<T> GetWithIncludesAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<IQueryable<T>> GetCollectionByPredicate(Expression<Func<T, bool>> predicate)
+        {
+            return _dbSet.Where(predicate);
+        }
+
+        public async Task<List<T>> GetCollectionByPredicateWithIncludesAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.Where(predicate).ToListAsync();
+        }
+
     }
 
 }
