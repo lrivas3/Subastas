@@ -1,6 +1,6 @@
 ﻿using Subastas.Domain;
 
-namespace Subastas.Interfaces.Services
+namespace Subastas.Interfaces
 {
     public interface ICuentaService
     {
