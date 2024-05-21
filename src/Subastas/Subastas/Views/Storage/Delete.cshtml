@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Delete File";
+}
+
+<h2>Delete File</h2>
+
+<form asp-action="DeleteFile" method="post">
+    <div class="form-group">
+        <label for="keyName">File Key Name</label>
+        <input type="text" class="form-control" id="keyName" name="keyName" required>
+    </div>
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>

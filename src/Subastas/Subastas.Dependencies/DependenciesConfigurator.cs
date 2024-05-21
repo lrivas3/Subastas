@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Subasta.Managers;
 using Subastas.Database;
 using Subastas.Interfaces;
+using Subastas.Interfaces.Services;
 using Subastas.Repositories;
 using Subastas.Services;
 
@@ -27,6 +28,7 @@ namespace Subastas.Dependencies
             services.AddScoped<IPermisoService, PermisoService>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IS3StorageService, S3StorageService>();
 
             return services;
         }

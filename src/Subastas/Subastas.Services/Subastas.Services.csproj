@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Subastas.Repositories\Subastas.Repositories.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.308.2" />
+  </ItemGroup>
+
 </Project>
