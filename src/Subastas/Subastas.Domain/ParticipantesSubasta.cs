@@ -1,6 +1,6 @@
 ﻿namespace Subastas.Domain;
 
-public partial class ParticipantesSubastum
+public partial class ParticipantesSubasta
 {
     public int IdSubasta { get; set; }
 

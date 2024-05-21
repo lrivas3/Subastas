@@ -24,7 +24,7 @@ public partial class Subasta
 
     public virtual Usuario? IdUsuarioNavigation { get; set; }
 
-    public virtual ICollection<ParticipantesSubastum> ParticipantesSubasta { get; set; } = new List<ParticipantesSubastum>();
+    public virtual ICollection<ParticipantesSubasta> ParticipantesSubasta { get; set; } = new List<ParticipantesSubasta>();
 
     public virtual ICollection<Puja> Pujas { get; set; } = new List<Puja>();
 }

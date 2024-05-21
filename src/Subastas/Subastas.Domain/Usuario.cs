@@ -14,9 +14,9 @@ public partial class Usuario
 
     public bool EstaActivo { get; set; }
 
-    public virtual Cuentum? Cuentum { get; set; }
+    public virtual Cuenta? Cuentum { get; set; }
 
-    public virtual ICollection<ParticipantesSubastum> ParticipantesSubasta { get; set; } = new List<ParticipantesSubastum>();
+    public virtual ICollection<ParticipantesSubasta> ParticipantesSubasta { get; set; } = new List<ParticipantesSubasta>();
 
     public virtual ICollection<Puja> Pujas { get; set; } = new List<Puja>();
 

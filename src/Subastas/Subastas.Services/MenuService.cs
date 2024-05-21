@@ -6,6 +6,11 @@ namespace Subastas.Services
 {
     public class MenuService(IMenuRepository menuRepository) : IMenuService
     {
+        public async Task<IEnumerable<Menu>> GetAllAsync()
+        {
+            return await menuRepository.GetAllAsync();
+        }
+
         public async Task<Menu> CreateAsync(Menu newMenu)
         {
             if (newMenu == null)

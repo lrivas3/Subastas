@@ -14,11 +14,11 @@ public partial class SubastasContext : DbContext
     {
     }
 
-    public virtual DbSet<Cuentum> Cuenta { get; set; }
+    public virtual DbSet<Cuenta> Cuenta { get; set; }
 
     public virtual DbSet<Menu> Menus { get; set; }
 
-    public virtual DbSet<ParticipantesSubastum> ParticipantesSubasta { get; set; }
+    public virtual DbSet<ParticipantesSubasta> ParticipantesSubasta { get; set; }
 
     public virtual DbSet<Permiso> Permisos { get; set; }
 
@@ -32,7 +32,7 @@ public partial class SubastasContext : DbContext
 
     public virtual DbSet<Subasta> Subastas { get; set; }
 
-    public virtual DbSet<Transaccione> Transacciones { get; set; }
+    public virtual DbSet<Transaccion> Transacciones { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
@@ -40,7 +40,7 @@ public partial class SubastasContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {        
-        modelBuilder.Entity<Cuentum>(entity =>
+        modelBuilder.Entity<Cuenta>(entity =>
         {
             entity.HasKey(e => e.IdCuenta);
 
@@ -56,7 +56,7 @@ public partial class SubastasContext : DbContext
                 .HasColumnName("saldo");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithOne(p => p.Cuentum)
-                .HasForeignKey<Cuentum>(d => d.IdUsuario)
+                .HasForeignKey<Cuenta>(d => d.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_cuenta_usuarios");
         });
@@ -81,7 +81,7 @@ public partial class SubastasContext : DbContext
                 .HasConstraintName("FK_menus_menus");
         });
 
-        modelBuilder.Entity<ParticipantesSubastum>(entity =>
+        modelBuilder.Entity<ParticipantesSubasta>(entity =>
         {
             entity.HasKey(e => new { e.IdSubasta, e.IdUsuario });
 
@@ -238,7 +238,7 @@ public partial class SubastasContext : DbContext
                 .HasConstraintName("FK_subastas_usuarios");
         });
 
-        modelBuilder.Entity<Transaccione>(entity =>
+        modelBuilder.Entity<Transaccion>(entity =>
         {
             entity.HasKey(e => e.IdTransaccion);
 

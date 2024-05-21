@@ -1,0 +1,8 @@
+﻿using Subastas.Domain;
+
+namespace Subastas.Interfaces
+{
+    public interface ICuentaRepository : IBaseRepository<Cuenta>
+    {
+    }
+}
