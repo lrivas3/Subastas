@@ -166,5 +166,18 @@ public class S3StorageService : IS3StorageService
                 throw; 
             }
         }
+    
+        public string GetUrlForObject(S3File s3File, AwsCredentials awsCredentials)
+        {
+            using var client = CreateAmazonS3Client(awsCredentials);
+            string urlString = client.GetPreSignedURL(new GetPreSignedUrlRequest
+            {
+                BucketName = s3File.BucketName,
+                Key = s3File.KeyName,
+                Expires = DateTime.UtcNow.AddMinutes(40) 
+            });
+
+            return urlString;
+        }
 }
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Subastas.Domain;
 using Subastas.Dto.Producto;
 using Subastas.Interfaces;
-using Subastas.Dto.S3;
+using Microsoft.AspNetCore.Http;
 using Subastas.Interfaces.Services;
 
 namespace Subastas.Controllers
@@ -12,29 +12,16 @@ namespace Subastas.Controllers
     public class ProductoController : Controller
     {
         private readonly IProductoService _productoService;
-        private readonly IS3StorageService _s3StorageService;
-        private readonly IConfiguration _config;
-        private readonly string _bucketName;
-        private readonly AwsCredentials _awsCredentials;
 
-        public ProductoController(IProductoService productoService, IS3StorageService s3StorageService,
-            IConfiguration config)
+        public ProductoController(IProductoService productoService)
         {
             _productoService = productoService;
-            _s3StorageService = s3StorageService;
-            _config = config;
-            _bucketName = _config["AwsConfiguration:SubastasBucket"];
-            _awsCredentials = new AwsCredentials
-            {
-                AwsKey = _config["AwsConfiguration:AwsAccessKey"],
-                AwsSecretKey = _config["AwsConfiguration:AwsSecretKey"]
-            };
         }
 
         public async Task<IActionResult> Index()
         {
-            var listaSubasta = await _productoService.GetAllAsync();
-            return View(listaSubasta);
+            var listaProductos = await _productoService.GetAllWithImageUrlsAsync();
+            return View(listaProductos);
         }
 
         public IActionResult Create()
@@ -51,42 +38,19 @@ namespace Subastas.Controllers
                 return View(productoRequest);
             }
 
-            // Early return if image is null or empty
-            if (imagen == null || imagen.Length == 0)
+            try
             {
-                ModelState.AddModelError(string.Empty, "No valid image provided.");
-                return View(productoRequest);
-            }
-
-            using (var stream = new MemoryStream())
-            {
-                await imagen.CopyToAsync(stream);
-                var s3Object = new S3Object
+                var newProducto = await _productoService.CreateWithImageAsync(productoRequest, imagen);
+                if (newProducto == null)
                 {
-                    InputStream = stream,
-                    Name = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName),
-                    BucketName = _bucketName
-                };
-
-                var response = await _s3StorageService.UploadObjectAsync(s3Object, _awsCredentials);
-                if (response.StatusCode != 200)
-                {
-                    ModelState.AddModelError(string.Empty, "Error uploading image to S3: " + response.Message);
-                    return View(productoRequest);
+                    throw new Exception("Product creation failed.");
                 }
-
-                // Crear una instancia de Producto desde ProductoCreateRequest
-                var producto = new Producto
-                {
-                    NombreProducto = productoRequest.NombreProducto,
-                    DescripcionProducto = productoRequest.DescripcionProducto,
-                    EstaActivo = productoRequest.EstaActivo,
-                    EstaSubastado = false,
-                    ImagenProducto = s3Object.Name // Set the image name after successful upload
-                };
-
-                await _productoService.CreateAsync(producto);
                 return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(productoRequest);
             }
         }
     }

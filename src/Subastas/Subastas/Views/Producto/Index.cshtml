@@ -11,7 +11,7 @@
     {
         <div class="col">
             <div class="card">
-                <img src="@(string.IsNullOrEmpty(item.ImagenProducto ) ? "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg" : item.ImagenProducto )" class="card-img-top" alt="@item.NombreProducto">
+                <img src="@(!string.IsNullOrEmpty(item.ImagenProducto) ? item.ImagenProducto : "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")" class="card-img-top" alt="@item.NombreProducto">
                 <div class="card-body">
                     <h5 class="card-title">@item.NombreProducto</h5>
                     <p class="card-text">@item.DescripcionProducto</p>

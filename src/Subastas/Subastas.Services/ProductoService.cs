@@ -3,14 +3,58 @@ using Subastas.Domain;
 using Subastas.Interfaces;
 using Subastas.Repositories;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Subastas.Dto.Producto;
+using Subastas.Dto.S3;
+using Subastas.Interfaces.Services;
 
 namespace Subastas.Services
 {
-    public class ProductoService(IProductoRepository productoRepository) : IProductoService
+    public class ProductoService : IProductoService
     {
+        private readonly IProductoRepository _productoRepository;
+        private readonly IS3StorageService _s3StorageService;
+        private readonly AwsCredentials _awsCredentials;
+        private readonly string _bucketName;
+        public ProductoService(IProductoRepository productoRepository, IS3StorageService s3StorageService, IConfiguration config)
+        {
+            _productoRepository = productoRepository;
+            _s3StorageService = s3StorageService;
+            _awsCredentials = new AwsCredentials
+            {
+                AwsKey = config["AwsConfiguration:AwsAccessKey"],
+                AwsSecretKey = config["AwsConfiguration:AwsSecretKey"]
+            };
+            _bucketName = config["AwsConfiguration:SubastasBucket"];
+        }
+        
         public async Task<IEnumerable<Producto>> GetAllAsync()
         {
-            return await productoRepository.GetAllAsync();
+            return await _productoRepository.GetAllAsync();
+        }
+        
+        public async Task<IEnumerable<Producto>> GetAllWithImageUrlsAsync()
+        {
+            var productos = await GetAllAsync();
+            var allWithImageUrlsAsync = productos.ToList();
+            foreach (var producto in allWithImageUrlsAsync)
+            {
+                if (!string.IsNullOrEmpty(producto.ImagenProducto))
+                {
+                    var s3File = new S3File
+                    {
+                        BucketName = _bucketName,
+                        KeyName = producto.ImagenProducto
+                    };
+                    producto.ImagenProducto = _s3StorageService.GetUrlForObject(s3File, _awsCredentials);
+                }
+                else
+                {
+                    producto.ImagenProducto = null;
+                }
+            }
+            return allWithImageUrlsAsync;
         }
 
         public async Task<Producto> CreateAsync(Producto newProducto)
@@ -18,9 +62,55 @@ namespace Subastas.Services
             if (newProducto == null)
                 return null;
 
-            await productoRepository.AddAsync(newProducto);
+            await _productoRepository.AddAsync(newProducto);
 
             return newProducto;
+        }
+        
+        public async Task<Producto> CreateWithImageAsync(ProductoCreateRequest request, IFormFile imageFile)
+        {
+            if (request == null)
+                return null;
+            
+            if(imageFile is null || imageFile.Length == 0)
+            {
+                throw new Exception("No valid image provided.");
+            }
+            
+            try
+            {
+                using var stream = new MemoryStream();
+                await imageFile.CopyToAsync(stream);
+                var s3Object = new S3Object
+                {
+                    InputStream = stream,
+                    Name = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName),
+                    BucketName = _bucketName
+                };
+
+                var response = await _s3StorageService.UploadObjectAsync(s3Object, _awsCredentials);
+                if (response.StatusCode != 200)
+                {
+                    throw new Exception("Error uploading image to S3: " + response.Message);
+                }
+                
+                var nuevoProducto = new Producto();
+                nuevoProducto.NombreProducto = request.NombreProducto;
+                nuevoProducto.DescripcionProducto = request.DescripcionProducto;
+                nuevoProducto.EstaActivo = request.EstaActivo;
+                
+                nuevoProducto.ImagenProducto = s3Object.Name;
+
+                await _productoRepository.AddAsync(nuevoProducto);
+                
+                return nuevoProducto;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
 
         public async Task<Producto> CreateIfNotExistsAsync(Producto newProducto)
@@ -39,29 +129,29 @@ namespace Subastas.Services
 
         public async Task<bool> ExistsByIdAsync(int idProducto)
         {
-            return await productoRepository.ExistsByPredicate(p => p.IdProducto.Equals(idProducto));
+            return await _productoRepository.ExistsByPredicate(p => p.IdProducto.Equals(idProducto));
         }
 
         public async Task<bool> ExistsByNameAsync(string ProductoName)
         {
-            return await productoRepository.ExistsByPredicate(p => EF.Functions.Like(p.NombreProducto, ProductoName));
+            return await _productoRepository.ExistsByPredicate(p => EF.Functions.Like(p.NombreProducto, ProductoName));
         }
 
         public async Task<Producto> GetByIdAsync(int idProducto)
         {
-            return await productoRepository.GetByIdAsync(idProducto);
+            return await _productoRepository.GetByIdAsync(idProducto);
         }
 
         public async Task<Producto> GetByNameAsync(string ProductoName)
         {
-            return await productoRepository.GetByPredicate(p => EF.Functions.Like(p.NombreProducto, ProductoName));
+            return await _productoRepository.GetByPredicate(p => EF.Functions.Like(p.NombreProducto, ProductoName));
         }
 
         public async Task<bool> DeleteById(int idProducto)
         {
             try
             {
-                await productoRepository.DeleteAsync(idProducto);
+                await _productoRepository.DeleteAsync(idProducto);
                 return true;
             }
             catch (Exception)
@@ -73,7 +163,7 @@ namespace Subastas.Services
 
         public async Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Producto, bool>> predicate)
         {
-            return (IEnumerable<Producto>)await productoRepository.GetCollectionByPredicate(predicate);
+            return (IEnumerable<Producto>)await _productoRepository.GetCollectionByPredicate(predicate);
         }
     }
 }
