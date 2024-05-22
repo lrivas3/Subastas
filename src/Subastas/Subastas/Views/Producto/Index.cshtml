@@ -18,13 +18,16 @@
                     <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
                     <p class="card-text">Subastado: @(item.EstaSubastado ? "Sí" : "No")</p>
                 </div>
-                <div class="card-footer text-center">
-                    <div class="btn-group" role="group">
-                        <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-primary">Details</a>
-                        <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-secondary">Edit</a>
-                        <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger">Delete</a>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer text-center">
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-primary">Details</a>
+                            <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-secondary">Edit</a>
+                            <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger">Delete</a>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
     }

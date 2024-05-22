@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Subastas.Database;
 
@@ -11,9 +12,11 @@ using Subastas.Database;
 namespace Subastas.Database.Migrations
 {
     [DbContext(typeof(SubastasContext))]
-    partial class SubastasContextModelSnapshot : ModelSnapshot
+    [Migration("20240522050405_ampliar-descripcion")]
+    partial class ampliardescripcion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,16 +163,16 @@ namespace Subastas.Database.Migrations
 
                     b.Property<string>("ImagenProducto")
                         .IsRequired()
-                        .HasMaxLength(100)
+                        .HasMaxLength(40)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(100)")
+                        .HasColumnType("varchar(40)")
                         .HasColumnName("imagen_producto");
 
                     b.Property<string>("NombreProducto")
                         .IsRequired()
-                        .HasMaxLength(200)
+                        .HasMaxLength(40)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(200)")
+                        .HasColumnType("varchar(40)")
                         .HasColumnName("nombre_producto");
 
                     b.HasKey("IdProducto");
