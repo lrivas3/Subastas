@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Domain;
 using Subastas.Interfaces;
+using System;
 using System.Linq.Expressions;
 
 namespace Subastas.Services
@@ -83,6 +84,16 @@ namespace Subastas.Services
         public async Task<Subasta> GetWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes)
         {
             return await subastaRepository.GetWithIncludesAsync(predicate, includes);
+        }
+
+        public async Task<List<Subasta>> GetSubastasWithPujaAndUsers(Expression<Func<Subasta, bool>>? predicate = null)
+        {
+            return await subastaRepository.GetSubastasWithPujaAndUsers(predicate);
+        }
+
+        public async Task<Subasta> GetSubastaWithPujaAndUsers(int idSubasta)
+        {
+            return await subastaRepository.GetSubastaWithPujaAndUsers(idSubasta);
         }
     }
 }
