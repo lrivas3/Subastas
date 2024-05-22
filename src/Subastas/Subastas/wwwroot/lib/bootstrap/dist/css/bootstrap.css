@@ -4514,19 +4514,22 @@ textarea.form-control-lg {
   margin-left: 1rem;
 }
 
+.card-header {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
 .card-header:first-child {
   border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
 }
 
 .card-footer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
     padding: 0.5rem 1rem;
+    margin-bottom: 0;
     background-color: rgba(0, 0, 0, 0.03);
     border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-    z-index: 1000;
 }
 
 .card-footer:last-child {
@@ -11317,6 +11320,7 @@ body {
     outline: none;
     position: relative;
     color: white;
+    font-size: 25px;
 }
 
     .toggle-btn.active {
@@ -11444,6 +11448,7 @@ form#registro {
     border: 0px;
     outline: none;
     border-radius: 30px;
+    color: white;
 }
 
 .check-box {
