@@ -1,0 +1,46 @@
+﻿@model Subastas.Domain.Producto
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Detalles del Producto</h2>
+
+<div>
+    <h4>Producto</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>ID</dt>
+        <dd>@Model.IdProducto</dd>
+
+        <dt>Nombre</dt>
+        <dd>@Model.NombreProducto</dd>
+
+        <dt>Descripción</dt>
+        <dd>@Model.DescripcionProducto</dd>
+
+        <dt>Estado</dt>
+        @if(Model.EstaActivo)
+        {
+            <dd>Activo</dd>
+        }
+        else
+        {
+            <dd>Inactivo</dd>
+        }
+
+        <!-- Verificación y muestra de la imagen del producto -->
+        @if (!string.IsNullOrEmpty(Model.ImagenProducto))
+        {
+            <dt>Imagen</dt>
+            <dd><img src="@Model.ImagenProducto" alt="Imagen del Producto" style="max-width: 100%; max-height: 300px;"></dd>
+        }
+        else
+        {
+            <dt>Imagen</dt>
+            <dd>No disponible</dd>
+        }
+    </dl>
+    <a asp-action="Index">Volver a la lista de productos</a>
+</div>

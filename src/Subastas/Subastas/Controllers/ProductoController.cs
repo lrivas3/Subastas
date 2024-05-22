@@ -84,5 +84,77 @@ namespace Subastas.Controllers
             ModelState.AddModelError("", "Failed to delete the product.");
             return RedirectToAction(nameof(Index));
         }
+        
+        // GET: Producto/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var producto = await _productoService.GetByIdWithImageUrlAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return View(producto);
+        }
+        
+        
+        // GET: Producto/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var producto = await _productoService.GetByIdWithImageUrlAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            // Aquí podrías realizar alguna transformación de datos si es necesario antes de enviarlos a la vista de edición
+            return View(producto);
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ProductoCreateRequest productoToUpdate, IFormFile imagen)
+        {
+            if (!ModelState.IsValid)
+            {
+                var productoToReturn = await _productoService.GetByIdAsync(id);
+                if (productoToReturn == null)
+                {
+                    return NotFound();
+                }
+                // Map properties manually or use a mapper to transfer data
+                productoToReturn.NombreProducto = productoToUpdate.NombreProducto;
+                productoToReturn.DescripcionProducto = productoToUpdate.DescripcionProducto;
+                productoToReturn.EstaActivo = productoToUpdate.EstaActivo;
+
+                return View(productoToReturn);
+            }
+
+            try
+            {
+                var updatedProducto = await _productoService.UpdateWithImageAsync(id, productoToUpdate, imagen);
+                if (updatedProducto == null)
+                {
+                    throw new Exception("Failed to update the product.");
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                var productoToReturn = await _productoService.GetByIdAsync(id);
+                return View(productoToReturn);
+            }
+        }
     }
 }

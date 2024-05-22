@@ -87,6 +87,60 @@ namespace Subastas.Services
             return producto;
         }
 
+        public async Task<Producto> UpdateWithImageAsync(int id, ProductoCreateRequest productoToUpdate, IFormFile imagen)
+        {
+            if (productoToUpdate == null)
+                return null;
+            
+            if(imagen is null || imagen.Length == 0)
+            {
+                throw new Exception("No valid image provided.");
+            }
+            
+            try
+            {
+                using var stream = new MemoryStream();
+                await imagen.CopyToAsync(stream);
+                var newS3Object = new S3Object
+                {
+                    InputStream = stream,
+                    Name = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName),
+                    BucketName = _bucketName
+                };
+
+                var response = await _s3StorageService.UploadObjectAsync(newS3Object, _awsCredentials);
+                if (response.StatusCode != 200)
+                {
+                    throw new Exception("Error uploading image to S3: " + response.Message);
+                }
+                
+                var productoExistente = await _productoRepository.GetByIdAsync(id);
+                
+                var oldS3File = new S3File
+                {
+                    BucketName = _bucketName,
+                    KeyName = productoExistente.ImagenProducto
+                };
+                
+                await _s3StorageService.DeleteObjectAsync(_awsCredentials, oldS3File);
+
+                productoExistente.NombreProducto = productoToUpdate.NombreProducto;
+                productoExistente.DescripcionProducto = productoToUpdate.DescripcionProducto;
+                productoExistente.EstaActivo = productoToUpdate.EstaActivo;
+                
+                productoExistente.ImagenProducto = newS3Object.Name;
+
+                await _productoRepository.UpdateAsync(productoExistente);
+                
+                return productoExistente;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
         public async Task<Producto> CreateAsync(Producto newProducto)
         {
             if (newProducto == null)

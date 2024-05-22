@@ -11,6 +11,7 @@ namespace Subastas.Interfaces.Services
         Task<IEnumerable<Producto>> GetAllAsync();
         Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Producto, bool>> predicate);
         Task<Producto> CreateWithImageAsync(ProductoCreateRequest request, IFormFile imageFile);
+        Task<Producto> UpdateWithImageAsync(int id, ProductoCreateRequest productoToUpdate, IFormFile imagen);
         Task<Producto> CreateAsync(Producto newProducto);
         Task<Producto> CreateIfNotExistsAsync(Producto newProducto);
         Task<bool> ExistsByIdAsync(int idProducto);
