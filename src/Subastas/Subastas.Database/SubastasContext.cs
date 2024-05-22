@@ -136,11 +136,11 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.EstaSubastado).HasColumnName("esta_subastado");
             entity.Property(e => e.ImagenProducto)
-                .HasMaxLength(40)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("imagen_producto");
             entity.Property(e => e.NombreProducto)
-                .HasMaxLength(40)
+                .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("nombre_producto");
         });
