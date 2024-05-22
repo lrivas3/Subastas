@@ -6,6 +6,7 @@ namespace Subastas.Interfaces
     public interface ISubastaService
     {
         Task<IEnumerable<Subasta>> GetAllAsync();
+        Task<List<Subasta>> GetCollectionByPredicateWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes);
         Task<Subasta> CreateAsync(Subasta newSubasta);
         Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate);
         Task<Subasta> CreateIfNotExistsAsync(Subasta newSubasta);

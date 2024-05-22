@@ -15,7 +15,7 @@ namespace Subastas.Controllers
         {
             try
             {
-                var listaSubasta = await subastaService.GetAllAsync();
+                var listaSubasta = await subastaService.GetCollectionByPredicateWithIncludesAsync(s=>s.EstaActivo, a=> a.Pujas);
                 return View(listaSubasta);
             }
             catch (DbException ex)
