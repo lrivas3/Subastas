@@ -130,7 +130,7 @@ public partial class SubastasContext : DbContext
 
             entity.Property(e => e.IdProducto).HasColumnName("id_producto");
             entity.Property(e => e.DescripcionProducto)
-                .HasMaxLength(40)
+                .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("descripcion_producto");
             entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
