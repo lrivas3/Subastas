@@ -53,5 +53,36 @@ namespace Subastas.Controllers
                 return View(productoRequest);
             }
         }
+        
+        
+        // GET: Producto/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var producto = await _productoService.GetByIdWithImageUrlAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return View(producto);
+        }
+        
+        [HttpPost, ActionName("DeleteConfirmed")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var success = await _productoService.SoftDeleteAsync(id);
+            if (success)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            ModelState.AddModelError("", "Failed to delete the product.");
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Database;
 using System.Linq.Expressions;
+using Subastas.Domain;
 
 namespace Subastas.Interfaces
 {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Subasta.Managers;
 using Subastas.Database;
 using Subastas.Interfaces;
+using Subastas.Interfaces.Repositories;
 using Subastas.Interfaces.Services;
 using Subastas.Repositories;
 using Subastas.Services;

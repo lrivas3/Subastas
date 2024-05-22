@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Subastas.Dto.Producto;
 using Subastas.Dto.S3;
+using Subastas.Interfaces.Repositories;
 using Subastas.Interfaces.Services;
 
 namespace Subastas.Services
@@ -34,9 +35,14 @@ namespace Subastas.Services
             return await _productoRepository.GetAllAsync();
         }
         
+        public async Task<IEnumerable<Producto>> GetAllActiveAsync()
+        {
+            return await _productoRepository.GetAllActiveAsync();
+        }
+        
         public async Task<IEnumerable<Producto>> GetAllWithImageUrlsAsync()
         {
-            var productos = await GetAllAsync();
+            var productos = await GetAllActiveAsync();
             var allWithImageUrlsAsync = productos.ToList();
             foreach (var producto in allWithImageUrlsAsync)
             {
@@ -55,6 +61,30 @@ namespace Subastas.Services
                 }
             }
             return allWithImageUrlsAsync;
+        }
+        
+        
+        public async Task<Producto> GetByIdWithImageUrlAsync(int idProducto)
+        {
+            var producto = await _productoRepository.GetByIdAsync(idProducto);
+            if (producto == null)
+                return null;
+
+            if (!string.IsNullOrEmpty(producto.ImagenProducto))
+            {
+                var s3File = new S3File
+                {
+                    BucketName = _bucketName,
+                    KeyName = producto.ImagenProducto
+                };
+                producto.ImagenProducto = _s3StorageService.GetUrlForObject(s3File, _awsCredentials);
+            }
+            else
+            {
+                producto.ImagenProducto = null;
+            }
+
+            return producto;
         }
 
         public async Task<Producto> CreateAsync(Producto newProducto)
@@ -157,6 +187,19 @@ namespace Subastas.Services
             catch (Exception)
             {
                 // TODO: SAVELOG
+                return false;
+            }
+        }
+
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+            try
+            {
+                await _productoRepository.SoftDeleteAsync(id);
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }

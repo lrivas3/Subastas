@@ -1,0 +1,35 @@
+﻿@model Subastas.Domain.Producto
+
+<h2>Eliminar Producto</h2>
+<h3>¿Seguro que quiere eliminar este producto?</h3>
+
+<div>
+    <h4>Producto</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Nombre</dt>
+        <dd>@Model.NombreProducto</dd>
+
+        <dt>Descripción</dt>
+        <dd>@Model.DescripcionProducto</dd>
+
+        <!-- Verificación y muestra de la imagen del producto -->
+        @if (!string.IsNullOrEmpty(Model.ImagenProducto))
+        {
+            <dt>Imagen</dt>
+            <dd><img src="@Model.ImagenProducto" alt="Imagen del Producto" style="max-width: 100%; max-height: 300px;"></dd>
+        }
+        else
+        {
+            <dt>Imagen</dt>
+            <dd>No disponible</dd>
+        }
+    </dl>
+    
+    <form asp-action="DeleteConfirmed" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.IdProducto" />
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver a lista de productos</a>
+    </form>
+</div>

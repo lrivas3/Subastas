@@ -18,5 +18,7 @@ namespace Subastas.Interfaces.Services
         Task<Producto> GetByIdAsync(int idProducto);
         Task<Producto> GetByNameAsync(string ProductoName);
         Task<bool> DeleteById(int idProducto);
+        Task<bool> SoftDeleteAsync(int id);
+        Task<Producto> GetByIdWithImageUrlAsync(int idProducto);
     }
 }
