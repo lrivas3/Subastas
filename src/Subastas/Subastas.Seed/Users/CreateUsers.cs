@@ -134,5 +134,57 @@ namespace Subastas.Seed.Users
 
             Assert.True(emerson != null && Alexis != null && Alfredo != null && guillermo != null && Lisbeth != null);
         }
+
+        [Fact]
+        public async Task CreateUsersSeed()
+        {
+            var usuario = await rolService.GetByNameAsync("User");
+
+            var usuario1 = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "usuario1@mail.com",
+                NombreUsuario = "usuario",
+                ApellidoUsuario = "1",
+                Cuentum = new Cuenta
+                {
+                    Saldo = 1000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("1234"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = usuario.IdRol
+                    }
+                }
+            });
+
+            var usuario2 = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "usuario2@mail.com",
+                NombreUsuario = "usuario",
+                ApellidoUsuario = "2",
+                Cuentum = new Cuenta
+                {
+                    Saldo = 1000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("1234"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = usuario.IdRol
+                    }
+                }
+            });
+
+            Assert.True(usuario1 != null && usuario2 != null);
+        }
     }
 }
