@@ -32,7 +32,7 @@ namespace Subastas.Controllers
             else
             {
                 // Login fallido, mostrar un mensaje de error
-                ViewData["Error"] = "Invalid username or password.";
+                ViewData["Error"] = "Correo o contraseña incorrecta.";
                 return View();
             }
         }
