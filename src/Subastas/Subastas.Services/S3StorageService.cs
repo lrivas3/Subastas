@@ -2,9 +2,9 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using Subastas.Domain.S3;
+using Subastas.Dto.S3;
 using Subastas.Interfaces.Services;
-using S3Object = Subastas.Domain.S3.S3Object;
+using S3Object = Subastas.Dto.S3.S3Object;
 
 namespace Subastas.Services;
 public class S3StorageService : IS3StorageService

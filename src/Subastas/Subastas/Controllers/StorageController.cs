@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
-using Subastas.Domain.S3;
+using Subastas.Dto.S3;
 using Subastas.Interfaces.Services;
-using S3Object = Subastas.Domain.S3.S3Object;
+using S3Object = Subastas.Dto.S3.S3Object;
 
 namespace Subastas.Controllers
 {

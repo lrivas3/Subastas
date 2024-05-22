@@ -1,4 +1,4 @@
-﻿using Subastas.Domain.S3;
+﻿using Subastas.Dto.S3;
 
 namespace Subastas.Interfaces.Services;
 

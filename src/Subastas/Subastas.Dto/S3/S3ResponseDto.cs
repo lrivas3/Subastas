@@ -1,4 +1,4 @@
-﻿namespace Subastas.Domain.S3;
+﻿namespace Subastas.Dto.S3;
 
 public class S3ResponseDto
 {
