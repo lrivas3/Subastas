@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Subastas.Domain.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<h1>Productos</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="@item.ImagenProducto" class="card-img-top" alt="@item.NombreProducto" />
+                <div class="card-body">
+                    <h5 class="card-title">@item.NombreProducto</h5>
+                    <p class="card-text">@item.DescripcionProducto</p>
+                    <a href="#" class="btn btn-primary">Detalles</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

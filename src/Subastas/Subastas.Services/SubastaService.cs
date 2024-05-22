@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Domain;
 using Subastas.Interfaces;
+using System.Linq.Expressions;
 
 namespace Subastas.Services
 {
@@ -67,6 +68,11 @@ namespace Subastas.Services
                 // TODO: SAVELOG
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate)
+        {
+            return (IEnumerable<Producto>)await subastaRepository.GetCollectionByPredicate(predicate);
         }
     }
 }

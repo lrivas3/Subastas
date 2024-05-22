@@ -1,4 +1,5 @@
 ﻿using Subastas.Domain;
+using System.Linq.Expressions;
 
 namespace Subastas.Interfaces
 {
@@ -6,6 +7,7 @@ namespace Subastas.Interfaces
     {
         Task<IEnumerable<Subasta>> GetAllAsync();
         Task<Subasta> CreateAsync(Subasta newSubasta);
+        Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate);
         Task<Subasta> CreateIfNotExistsAsync(Subasta newSubasta);
         Task<bool> ExistsByIdAsync(int idSubasta);
         Task<bool> ExistsByTituloSubastaAsync(string tituloSubasta);

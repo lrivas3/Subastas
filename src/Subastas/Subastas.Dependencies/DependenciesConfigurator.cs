@@ -26,6 +26,12 @@ namespace Subastas.Dependencies
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<IPermisoRepository, PermisoRepository>();
             services.AddScoped<IPermisoService, PermisoService>();
+            services.AddScoped<IProductoRepository, ProductoRepository>();
+            services.AddScoped<IProductoService, ProductoService>();
+            services.AddScoped<IPujaRepository, PujaRepository>();
+            services.AddScoped<ISubastaRepository, SubastaRepository>();
+            services.AddScoped<ISubastaService, SubastaService>();
+            services.AddScoped<IPujaService, PujaService>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IS3StorageService, S3StorageService>();

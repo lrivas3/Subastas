@@ -20,7 +20,7 @@ public partial class Subasta
 
     public int IdProducto { get; set; }
 
-    public virtual Producto IdProductoNavigation { get; set; } = null!;
+    public virtual Producto? IdProductoNavigation { get; set; }
 
     public virtual Usuario? IdUsuarioNavigation { get; set; }
 

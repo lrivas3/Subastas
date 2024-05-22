@@ -1,0 +1,51 @@
+﻿@model Subastas.Domain.Producto
+
+@{
+    ViewData["Title"] = "Crear Producto";
+}
+
+<h1>Crear Producto</h1>
+
+<h4>Producto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label asp-for="NombreProducto" class="control-label"></label>
+                <input asp-for="NombreProducto" class="form-control" />
+                <span asp-validation-for="NombreProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescripcionProducto" class="control-label"></label>
+                <textarea asp-for="DescripcionProducto" class="form-control"></textarea>
+                <span asp-validation-for="DescripcionProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImagenProducto" class="control-label"></label>
+                <input asp-for="ImagenProducto" class="form-control" />
+                <span asp-validation-for="ImagenProducto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="EstaActivo" class="form-check-input" />
+                    <label asp-for="EstaActivo" class="form-check-label"></label>
+                </div>
+                <span asp-validation-for="EstaActivo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

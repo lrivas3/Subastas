@@ -1,106 +1,78 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Subastas.Database;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Subastas.Interfaces;
 using System.Data.Common;
 
 namespace Subastas.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public class SubastaController(SubastasContext _contex) : Controller
+    public class SubastaController(
+        IProductoService productoService, 
+        ISubastaService subastaService) : Controller
     {
-        // GET: SubastaController
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Subastas.Domain.Subasta> listSubasta = null;
             try
             {
-                listSubasta = _contex.Subastas.ToList();
-                return View(listSubasta);
-
+                var listaSubasta = await subastaService.GetAllAsync();
+                return View(listaSubasta);
             }
             catch (DbException ex)
             {
-                // Manejar la excepción de base de datos si es necesario
+                // TODO EVENTLOGEOLOGEOSO PERRASSSSSS
                 ModelState.AddModelError(string.Empty, "Error de base de datos: " + ex.Message);
-                return View(); // Retornamos la vista con el error
+                return View();
             }
             catch (Exception ex)
             {
-                // Manejar otras excepciones si es necesario
                 ModelState.AddModelError(string.Empty, "Ocurrió un error: " + ex.Message);
-                return View(); // Retornamos la vista con el error
+                return View();
             }
         }
 
-        // GET: SubastaController/Details/5
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        public ActionResult Details(int id)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles ="Admin")]
+        public async Task<IActionResult> Create()
         {
-            var subasta = _contex.Subastas.Include(x=>x.Pujas).ThenInclude(x=>x.IdUsuarioNavigation).Where(x=>x.IdSubasta == id).FirstOrDefault();
-            
+            ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo), "IdProducto", "NombreProducto");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("TituloSubasta,MontoInicial,FechaSubasta,FechaSubastaFin,IdProducto")] Domain.Subasta subasta)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await subastaService.CreateAsync(subasta);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo), "IdProducto", "NombreProducto");
+            }
+            catch (Exception ex)
+            {
+                // LogError
+            }
+
             return View(subasta);
         }
 
-        // GET: SubastaController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-        // POST: SubastaController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> Details(int id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                var subasta = await subastaService.GetByIdAsync(id);
 
-        // GET: SubastaController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: SubastaController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
+                return View(subasta);
             }
-            catch
+            catch (Exception)
             {
-                return View();
-            }
-        }
-
-        // GET: SubastaController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: SubastaController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
+                // TODO EVENTLOGGGGG:V
                 return View();
             }
         }

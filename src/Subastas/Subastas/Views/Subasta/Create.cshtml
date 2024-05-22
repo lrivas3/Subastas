@@ -1,0 +1,56 @@
+﻿@model Subastas.Domain.Subasta
+
+@{
+    ViewData["Title"] = "Crear Subasta";
+}
+
+<h1>Crear Subasta</h1>
+
+<h4>Subasta</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group">
+                <label asp-for="TituloSubasta" class="control-label"></label>
+                <input asp-for="TituloSubasta" class="form-control" />
+                <span asp-validation-for="TituloSubasta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MontoInicial" class="control-label"></label>
+                <input asp-for="MontoInicial" class="form-control" />
+                <span asp-validation-for="MontoInicial" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaSubasta" class="control-label"></label>
+                <input asp-for="FechaSubasta" class="form-control" />
+                <span asp-validation-for="FechaSubasta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaSubastaFin" class="control-label"></label>
+                <input asp-for="FechaSubastaFin" class="form-control" />
+                <span asp-validation-for="FechaSubastaFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdProducto" class="control-label">Producto</label>
+                <select asp-for="IdProducto" class="form-control" asp-items="ViewBag.IdProducto"></select>
+                <span asp-validation-for="IdProducto" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="EstaActivo" />
+            <input type="hidden" asp-for="Finalizada" />
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
