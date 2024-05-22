@@ -44,51 +44,50 @@ namespace Subastas.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(
-            [Bind("NombreProducto,DescripcionProducto,EstaActivo")] ProductoCreateRequest productoRequest,
-            IFormFile imagen)
+        public async Task<IActionResult> Create([Bind("NombreProducto,DescripcionProducto,EstaActivo")] ProductoCreateRequest productoRequest, IFormFile imagen)
         {
             if (!ModelState.IsValid)
             {
                 return View(productoRequest);
             }
 
-            // Crear una instancia de Producto desde ProductoCreateRequest
-            var producto = new Producto
+            // Early return if image is null or empty
+            if (imagen == null || imagen.Length == 0)
             {
-                NombreProducto = productoRequest.NombreProducto,
-                DescripcionProducto = productoRequest.DescripcionProducto,
-                EstaActivo = productoRequest.EstaActivo,
-                EstaSubastado = false // Valor predeterminado, ya que no se subasta inmediatamente al crear
-            };
-
-            if (imagen != null && imagen.Length > 0)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    await imagen.CopyToAsync(stream);
-
-                    var s3Object = new S3Object
-                    {
-                        InputStream = stream,
-                        Name = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName),
-                        BucketName = _bucketName
-                    };
-
-                    var response = await _s3StorageService.UploadObjectAsync(s3Object, _awsCredentials);
-
-                    if (response.StatusCode != 200)
-                    {
-                        ModelState.AddModelError(string.Empty, "Error uploading image to S3: " + response.Message);
-                        return View(productoRequest);
-                    }
-
-                    producto.ImagenProducto = s3Object.Name;
-                }
+                ModelState.AddModelError(string.Empty, "No valid image provided.");
+                return View(productoRequest);
             }
 
-            await _productoService.CreateAsync(producto);
-            return RedirectToAction(nameof(Index));
+            using (var stream = new MemoryStream())
+            {
+                await imagen.CopyToAsync(stream);
+                var s3Object = new S3Object
+                {
+                    InputStream = stream,
+                    Name = Guid.NewGuid().ToString() + Path.GetExtension(imagen.FileName),
+                    BucketName = _bucketName
+                };
+
+                var response = await _s3StorageService.UploadObjectAsync(s3Object, _awsCredentials);
+                if (response.StatusCode != 200)
+                {
+                    ModelState.AddModelError(string.Empty, "Error uploading image to S3: " + response.Message);
+                    return View(productoRequest);
+                }
+
+                // Crear una instancia de Producto desde ProductoCreateRequest
+                var producto = new Producto
+                {
+                    NombreProducto = productoRequest.NombreProducto,
+                    DescripcionProducto = productoRequest.DescripcionProducto,
+                    EstaActivo = productoRequest.EstaActivo,
+                    EstaSubastado = false,
+                    ImagenProducto = s3Object.Name // Set the image name after successful upload
+                };
+
+                await _productoService.CreateAsync(producto);
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }
