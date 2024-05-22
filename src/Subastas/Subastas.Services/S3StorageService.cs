@@ -5,6 +5,11 @@ using Amazon.S3.Transfer;
 using Subastas.Dto.S3;
 using Subastas.Interfaces.Services;
 using S3Object = Subastas.Dto.S3.S3Object;
+using System.IO;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Processing;
 
 namespace Subastas.Services;
 public class S3StorageService : IS3StorageService
@@ -22,14 +27,38 @@ public class S3StorageService : IS3StorageService
 
     public async Task<S3ResponseDto> UploadObjectAsync(S3Object s3Object, AwsCredentials awsCredentials)
     {
+        
+        if (s3Object.InputStream == null || !s3Object.InputStream.CanRead)
+        {
+            throw new InvalidOperationException("Stream is null or cannot be read.");
+        }
+
+        // rewound the stream to the beginning
+        s3Object.InputStream.Seek(0, SeekOrigin.Begin);
+        
         using var client = CreateAmazonS3Client(awsCredentials);
 
         var response = new S3ResponseDto();
         try
         {
+            using var outStream = new MemoryStream();
+            using (var image = await Image.LoadAsync(s3Object.InputStream))
+            {
+                // Resize 
+                image.Mutate(x => x.Resize(400, 300, KnownResamplers.Lanczos3));
+                
+                // Detect the appropriate encoder based on the file extension
+                IImageEncoder encoder = image.DetectEncoder(s3Object.Name);
+                
+                // Save the resized image to outStream
+                await image.SaveAsync(outStream, encoder);
+                // Reset stream position to the beginning
+                outStream.Seek(0, SeekOrigin.Begin); 
+            }
+            
             var uploadRequest = new TransferUtilityUploadRequest
             {
-                InputStream = s3Object.InputStream,
+                InputStream = outStream,
                 Key = s3Object.Name,
                 BucketName = s3Object.BucketName,
                 CannedACL = S3CannedACL.NoACL
