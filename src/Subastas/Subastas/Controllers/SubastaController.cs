@@ -66,7 +66,7 @@ namespace Subastas.Controllers
         {
             try
             {
-                var subasta = await subastaService.GetByIdAsync(id);
+                var subasta = await subastaService.GetWithIncludesAsync(s => s.IdSubasta == id, s => s.Pujas, s => s.ParticipantesSubasta);
 
                 return View(subasta);
             }

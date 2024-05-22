@@ -79,5 +79,10 @@ namespace Subastas.Services
         {
             return await subastaRepository.GetCollectionByPredicateWithIncludesAsync(predicate, includes);
         }
+
+        public async Task<Subasta> GetWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes)
+        {
+            return await subastaRepository.GetWithIncludesAsync(predicate, includes);
+        }
     }
 }

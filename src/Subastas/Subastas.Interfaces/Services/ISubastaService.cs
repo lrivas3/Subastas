@@ -15,5 +15,6 @@ namespace Subastas.Interfaces
         Task<Subasta> GetByIdAsync(int idSubasta);
         Task<Subasta> GetByTituloSubastaAsync(string tituloSubasta);
         Task<bool> DeleteById(int idSubasta);
+        Task<Subasta> GetWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes);
     }
 }
