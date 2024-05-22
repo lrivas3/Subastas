@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Domain;
 using Subastas.Interfaces;
+using System;
 using System.Linq.Expressions;
 
 namespace Subastas.Services
@@ -70,9 +71,29 @@ namespace Subastas.Services
             }
         }
 
-        public async Task<IEnumerable<Producto>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate)
+        public async Task<IEnumerable<Subasta>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate)
         {
-            return (IEnumerable<Producto>)await subastaRepository.GetCollectionByPredicate(predicate);
+            return (IEnumerable<Subasta>)await subastaRepository.GetCollectionByPredicate(predicate);
+        }
+
+        public async Task<List<Subasta>> GetCollectionByPredicateWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes)
+        {
+            return await subastaRepository.GetCollectionByPredicateWithIncludesAsync(predicate, includes);
+        }
+
+        public async Task<Subasta> GetWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes)
+        {
+            return await subastaRepository.GetWithIncludesAsync(predicate, includes);
+        }
+
+        public async Task<List<Subasta>> GetSubastasWithPujaAndUsers(Expression<Func<Subasta, bool>>? predicate = null)
+        {
+            return await subastaRepository.GetSubastasWithPujaAndUsers(predicate);
+        }
+
+        public async Task<Subasta> GetSubastaWithPujaAndUsers(int idSubasta)
+        {
+            return await subastaRepository.GetSubastaWithPujaAndUsers(idSubasta);
         }
     }
 }

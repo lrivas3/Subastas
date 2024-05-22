@@ -23,7 +23,7 @@ namespace Subastas.Controllers
             {
                 var roles = user.UsuarioRols.Select(x => x.IdRolNavigation.NombreRol).ToList();
                 
-                var token = JwtManager.GenerateToken(user.IdUsuario.ToString(), email, roles);
+                var token = JwtManager.GenerateToken(user.IdUsuario.ToString(), email, roles, user.NombreUsuario, user.ApellidoUsuario);
 
                 await HttpContext.SignInAsync(JwtBearerDefaults.AuthenticationScheme, JwtManager.GetPrincipal(token));
 

@@ -15,7 +15,7 @@ namespace Subastas.Controllers
         {
             try
             {
-                var listaSubasta = await subastaService.GetAllAsync();
+                var listaSubasta = await subastaService.GetAllByPredicateAsync(s=>s.EstaActivo);
                 return View(listaSubasta);
             }
             catch (DbException ex)
@@ -66,7 +66,7 @@ namespace Subastas.Controllers
         {
             try
             {
-                var subasta = await subastaService.GetByIdAsync(id);
+                var subasta = await subastaService.GetSubastaWithPujaAndUsers(id);
 
                 return View(subasta);
             }

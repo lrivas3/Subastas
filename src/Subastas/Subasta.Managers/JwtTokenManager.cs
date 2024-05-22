@@ -13,7 +13,7 @@ namespace Subastas.Managers
         /// </summary>
         private const string Secret = "db3OIsj+BXE9NZDy0t8W3TcNekrF+2d/1sFnWG4HnV8TZY30iTOdtVWJG8abWvB1GlOgJuQZdcF2Luqm/hccMw==";
 
-        public static string GenerateToken(string userId, string email, List<string> roles, int expireMinutes = 20)
+        public static string GenerateToken(string userId, string email, List<string> roles, string nombre, string apellido, int expireMinutes = 20)
         {
             var symmetricKey = Convert.FromBase64String(Secret);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -21,6 +21,7 @@ namespace Subastas.Managers
             var claims = new List<Claim>
             {
                 new (ClaimTypes.NameIdentifier, userId),
+                new (ClaimTypes.Name, $"{nombre} {apellido}"),
                 new (ClaimTypes.Email, email)
             };
 
