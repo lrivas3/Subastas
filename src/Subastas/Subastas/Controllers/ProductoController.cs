@@ -8,7 +8,7 @@ using Subastas.Interfaces.Services;
 
 namespace Subastas.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class ProductoController : Controller
     {
         private readonly IProductoService _productoService;
