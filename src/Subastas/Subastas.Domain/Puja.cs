@@ -12,7 +12,7 @@ public partial class Puja
 
     public int IdUsuario { get; set; }
 
-    public virtual Subasta IdSubastaNavigation { get; set; } = null!;
+    public virtual Subasta? IdSubastaNavigation { get; set; } = null!;
 
-    public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
+    public virtual Usuario? IdUsuarioNavigation { get; set; } = null!;
 }

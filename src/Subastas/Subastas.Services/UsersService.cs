@@ -82,5 +82,18 @@ namespace Subastas.Services
 
             return user;
         }
+
+        public async Task<Usuario> GetUserWithCuentum(int idUser)
+        {
+            var user = await userRepo.GetUserWithCuentum(idUser);
+
+            if (user == null || user.IdUsuario <= 0)
+                return null;
+
+            user.UsuarioRols = await usuarioRolService.GetRolesByUserId(user.IdUsuario);
+
+            return user;
+        }
+
     }
 }

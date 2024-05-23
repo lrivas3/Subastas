@@ -67,5 +67,20 @@ namespace Subastas.Services
                 return false;
             }
         }
+
+        public async Task<bool> UpdateCuenta(Cuenta cuenta)
+        {
+            try
+            {
+                 await cuentaRepository.UpdateAsync(cuenta);
+                
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: SAVELOG
+                return false;
+            }
+        }
     }
 }

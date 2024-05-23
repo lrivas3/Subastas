@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Subastas.Database;
+using Subastas.Domain;
+using Subastas.Interfaces;
+using System.Security.Claims;
 namespace Subastas.Controllers
 {
-    public class PujasController(SubastasContext _context) : Controller
+    public class PujasController(IPujaService pujaService, IUserService userService, ICuentaService cuentaService) : Controller
     {
         // GET: PujasController
         public ActionResult Index()
@@ -13,12 +17,11 @@ namespace Subastas.Controllers
         }
 
         // GET: PujasController/Details/5
-        [Authorize(AuthenticationSchemes = "Bearer")]
         public ActionResult Details(int id)
         {
             Subastas.Domain.Puja subasta = new Subastas.Domain.Puja();
             subasta.IdSubasta = id;
-            subasta.IdUsuario = int.Parse(User.FindFirst("idUser")?.Value);
+            subasta.IdUsuario = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             return View(subasta);
         }
 
@@ -31,11 +34,39 @@ namespace Subastas.Controllers
         // POST: PujasController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create([Bind("IdSubasta,IdUsuario,MontoPuja")] Puja Puja)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    Puja.FechaPuja = DateOnly.Parse(DateTime.Now.ToString("dd/MM/yyyy"));
+                    var user = await userService.GetUserWithCuentum(Puja.IdUsuario);
+                    if (user == null)
+                    {
+                        ViewData["Error"] = "Usuario no encontrado";
+                        return View();
+                    }
+                    if ((Puja.MontoPuja-user.Cuentum.Saldo)>0)
+                    {
+                        ViewData["Error"] = "Tu saldo es insuficiente";
+                        return View();
+                    }
+                    decimal saldo = user.Cuentum.Saldo - Puja.MontoPuja;
+
+                    var cuenta = await cuentaService.GetByUserIdAsync(Puja.IdUsuario);
+                    cuenta.Saldo = saldo;
+                    bool update = await cuentaService.UpdateCuenta(cuenta);
+                    if (!update) 
+                    {
+                        ViewData["Error"] = "No se actualizo tu saldo";
+                        return View();
+                    }
+                    await pujaService.CreateAsync(Puja);
+                    return RedirectToAction("Details", "Subasta", new { id = Puja.IdSubasta });
+
+                }
+                return View();
             }
             catch
             {

@@ -30,7 +30,7 @@
                                     <dl class="row">
                                         <dt class="col-sm-3">#:</dt>
                                         <dd class="col-sm-9">@Model.IdSubasta</dd>
-                                        <dt class="col-sm-3">Monto Inicial:</dt>
+                                        <dt class="col-sm-3">Monto actual:</dt>
                                         <dd class="col-sm-9">$@Model.MontoInicial</dd>
                                         <dt class="col-sm-3">Estado:</dt>
                                         <dd class="col-sm-9">@Model.EstaActivo</dd>
@@ -88,7 +88,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Aquí puedes iterar sobre los participantes de la subasta y mostrarlos en filas -->
+                        @foreach (var item in Model.ParticipantesSubasta)
+                        {
+                            <tr>
+                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
+                                <td>@Model.FechaSubasta</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

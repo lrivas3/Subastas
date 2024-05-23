@@ -62,13 +62,14 @@ namespace Subastas.Controllers
             return View(subasta);
         }
 
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Details(int id)
         {
             try
             {
                 var subasta = await subastaService.GetSubastaWithPujaAndUsers(id);
-
+                decimal priceNow = subasta.MontoInicial;
+                subasta.MontoInicial = subasta.Pujas.Max(s=>s.MontoPuja);
                 return View(subasta);
             }
             catch (Exception)

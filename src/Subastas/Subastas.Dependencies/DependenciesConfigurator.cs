@@ -37,6 +37,7 @@ namespace Subastas.Dependencies
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IS3StorageService, S3StorageService>();
             services.AddScoped<ICuentaRepository, CuentaRepository>();
+            services.AddScoped<ICuentaService, CuentaService>();
             services.AddScoped<IUsuarioRolRepository, UsuarioRolRepository>();
             services.AddScoped<IUsuarioRolService, UsuarioRolService>();
 
