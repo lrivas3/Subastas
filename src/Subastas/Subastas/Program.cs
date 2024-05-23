@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Subastas.Dependencies;
+using Subastas.Services.Shared.Logging.DbLoggerObjects;
 
 namespace Subastas
 {
@@ -21,6 +22,11 @@ namespace Subastas
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                     o.AccessDeniedPath = "/Authentication/Login";
                 });
+            builder.Logging.AddDbLogger(options =>
+            {
+                builder.Configuration.GetSection("Logging")
+                .GetSection("Database").GetSection("Options").Bind(options);
+            });
 
             var app = builder.Build();
 
