@@ -20,8 +20,16 @@ namespace Subastas.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var listaProductos = await _productoService.GetAllWithImageUrlsAsync();
-            return View(listaProductos);
+            try
+            {
+                var listaProductos = await _productoService.GetAllWithImageUrlsAsync();
+                return View(listaProductos);
+            }
+            catch (Exception e)
+            {
+                ViewData["Error"] = "An error occurred while trying to retrieve the products.";
+                return View();
+            }
         }
 
         public IActionResult Create()

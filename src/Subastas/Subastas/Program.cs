@@ -22,10 +22,11 @@ namespace Subastas
                     o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
                     o.AccessDeniedPath = "/Authentication/Login";
                 });
+            // Configure DbLogger with connection string from the configuration
             builder.Logging.AddDbLogger(options =>
             {
-                builder.Configuration.GetSection("Logging")
-                .GetSection("Database").GetSection("Options").Bind(options);
+                options.ConnectionString = builder.Configuration.GetConnectionString("SubastasConnectionString");
+                builder.Configuration.GetSection("Logging:Database:Options").Bind(options);
             });
 
             var app = builder.Build();

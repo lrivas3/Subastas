@@ -2,7 +2,7 @@
 {
     public class DbLoggerOptions
     {
-        public string ConnectionString { get; init; }
+        public string ConnectionString { get; set; }
 
         public string[] LogFields { get; init; }
 
