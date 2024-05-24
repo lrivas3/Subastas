@@ -9,6 +9,8 @@ namespace Subastas.Interfaces
         Task<List<Subasta>> GetCollectionByPredicateWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes);
         Task<Subasta> CreateAsync(Subasta newSubasta);
         Task<IEnumerable<Subasta>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate);
+        Task<IEnumerable<Subasta>> SetToListProductoWithImgPreloaded(IEnumerable<Subasta> listaSubastas);
+        Task<Subasta> SetProductoWithImgPreloaded(Subasta subasta);
         Task<Subasta> CreateIfNotExistsAsync(Subasta newSubasta);
         Task<bool> ExistsByIdAsync(int idSubasta);
         Task<bool> ExistsByTituloSubastaAsync(string tituloSubasta);

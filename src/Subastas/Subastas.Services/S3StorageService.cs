@@ -132,52 +132,52 @@ public class S3StorageService : IS3StorageService
     /// <param name="s3File">The name and bucket of the object to retrieve.</param>
     /// <returns>A stream containing the object's data.</returns>
     public async Task<GetS3ObjectResult> GetObjectAsync(AwsCredentials awsCredentials, S3File s3File)
-        {
-            try
-            {
-                using var client = CreateAmazonS3Client(awsCredentials);
-                var request = new GetObjectRequest
-                {
-                    BucketName = s3File.BucketName,
-                    Key = s3File.KeyName,
-                };
-
-                // Issue request and get the response
-                using var response = await client.GetObjectAsync(request);
-                using var responseStream = new MemoryStream();
-                await response.ResponseStream.CopyToAsync(responseStream);
-                
-                var result = new GetS3ObjectResult()
-                {
-                    Data = responseStream.ToArray(),
-                    ContentType = response.Headers["Content-Type"] 
-                };
-
-                return result;
-            }
-            catch (AmazonS3Exception ex)
-            {
-                Console.WriteLine($"Amazon S3 Exception: {ex.Message}");
-                throw; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                throw; 
-            }
-        }
-    
-        public string GetUrlForObject(S3File s3File, AwsCredentials awsCredentials)
+    {
+        try
         {
             using var client = CreateAmazonS3Client(awsCredentials);
-            string urlString = client.GetPreSignedURL(new GetPreSignedUrlRequest
+            var request = new GetObjectRequest
             {
                 BucketName = s3File.BucketName,
                 Key = s3File.KeyName,
-                Expires = DateTime.UtcNow.AddMinutes(40) 
-            });
+            };
 
-            return urlString;
+            // Issue request and get the response
+            using var response = await client.GetObjectAsync(request);
+            using var responseStream = new MemoryStream();
+            await response.ResponseStream.CopyToAsync(responseStream);
+                
+            var result = new GetS3ObjectResult()
+            {
+                Data = responseStream.ToArray(),
+                ContentType = response.Headers["Content-Type"] 
+            };
+
+            return result;
         }
+        catch (AmazonS3Exception ex)
+        {
+            Console.WriteLine($"Amazon S3 Exception: {ex.Message}");
+            throw; 
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            throw; 
+        }
+    }
+
+    public string GetUrlForObject(S3File s3File, AwsCredentials awsCredentials)
+    {
+        using var client = CreateAmazonS3Client(awsCredentials);
+        string urlString = client.GetPreSignedURL(new GetPreSignedUrlRequest
+        {
+            BucketName = s3File.BucketName,
+            Key = s3File.KeyName,
+            Expires = DateTime.UtcNow.AddMinutes(40)
+        });
+
+        return urlString;
+    }
 }
 

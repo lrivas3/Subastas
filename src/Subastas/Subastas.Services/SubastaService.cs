@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subastas.Domain;
 using Subastas.Interfaces;
-using System;
+using Subastas.Interfaces.Services;
 using System.Linq.Expressions;
 
 namespace Subastas.Services
 {
-    public class SubastaService(ISubastaRepository subastaRepository) : ISubastaService
+    public class SubastaService(ISubastaRepository subastaRepository, IProductoService productoService) : ISubastaService
     {
         public async Task<Subasta> CreateAsync(Subasta newSubasta)
         {
@@ -73,7 +73,30 @@ namespace Subastas.Services
 
         public async Task<IEnumerable<Subasta>> GetAllByPredicateAsync(Expression<Func<Subasta, bool>> predicate)
         {
-            return (IEnumerable<Subasta>)await subastaRepository.GetCollectionByPredicate(predicate);
+            return await subastaRepository.GetCollectionByPredicate(predicate);
+        }
+
+        public async Task<IEnumerable<Subasta>> SetToListProductoWithImgPreloaded(IEnumerable<Subasta> listaSubastas)
+        {
+            foreach (var item in listaSubastas)
+            {
+                if(item.IdProducto > 0)
+                {
+                    item.IdProductoNavigation = await productoService.GetByIdWithImageUrlAsync(item.IdProducto);
+                }
+            }
+
+            return listaSubastas;
+        }
+
+        public async Task<Subasta> SetProductoWithImgPreloaded(Subasta subasta)
+        {
+            if (subasta != null && subasta.IdProducto > 0)
+            {
+                subasta.IdProductoNavigation = await productoService.GetByIdWithImageUrlAsync(subasta.IdProducto);
+            }
+
+            return subasta;
         }
 
         public async Task<List<Subasta>> GetCollectionByPredicateWithIncludesAsync(Expression<Func<Subasta, bool>> predicate, params Expression<Func<Subasta, object>>[] includes)

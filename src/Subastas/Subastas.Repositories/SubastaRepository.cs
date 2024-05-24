@@ -20,7 +20,7 @@ namespace Subastas.Repositories
 
         public async Task<Subasta> GetSubastaWithPujaAndUsers(int idSubasta)
         {
-            return await context.Subastas.Include(s => s.Pujas).ThenInclude(s => s.IdUsuarioNavigation).FirstOrDefaultAsync(s => s.IdSubasta == idSubasta);
+            return await context.Subastas.Include(x => x.IdProductoNavigation).Include(x=>x.ParticipantesSubasta).Include(s => s.Pujas).ThenInclude(s => s.IdUsuarioNavigation).FirstOrDefaultAsync(s => s.IdSubasta == idSubasta);
         }
     }
 }

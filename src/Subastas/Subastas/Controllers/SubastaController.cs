@@ -16,7 +16,8 @@ namespace Subastas.Controllers
         {
             try
             {
-                var listaSubasta = await subastaService.GetAllByPredicateAsync(s=>s.EstaActivo);
+                var listaSubasta = await subastaService.GetAllByPredicateAsync(s => s.EstaActivo);
+                listaSubasta = await subastaService.SetToListProductoWithImgPreloaded(listaSubasta.ToList());
                 return View(listaSubasta);
             }
             catch (DbException ex)
@@ -65,17 +66,22 @@ namespace Subastas.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Details(int id)
         {
+            var subasta = new Domain.Subasta();
             try
             {
-                var subasta = await subastaService.GetSubastaWithPujaAndUsers(id);
-                decimal priceNow = subasta.MontoInicial;
-                subasta.MontoInicial = subasta.Pujas.Max(s=>s.MontoPuja);
+                subasta = await subastaService.GetSubastaWithPujaAndUsers(id) ?? subasta;
+                subasta = await subastaService.SetProductoWithImgPreloaded(subasta);
+
+                if (subasta != null)
+                {
+                    decimal priceNow = subasta.MontoInicial;
+                    subasta.MontoInicial = subasta.Pujas.Max(s => s.MontoPuja);
+                }
                 return View(subasta);
             }
             catch (Exception)
             {
-                // TODO EVENTLOGGGGG:V
-                return View();
+                return View(subasta);
             }
         }
     }
