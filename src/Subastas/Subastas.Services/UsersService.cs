@@ -16,6 +16,7 @@ namespace Subastas.Services
             if (newUsuario == null)
                 return null;
 
+
             await userRepo.AddAsync(newUsuario);
 
             return newUsuario;
@@ -31,6 +32,8 @@ namespace Subastas.Services
 
             if (newUsuario.IdUsuario > 0 && await ExistsByIdAsync(newUsuario.IdUsuario))
                 return await GetByIdAsync(newUsuario.IdUsuario);
+
+            newUsuario.Password = encrypManager.Encrypt(newUsuario.Password);
 
             return await CreateAsync(newUsuario);
         }
@@ -95,5 +98,9 @@ namespace Subastas.Services
             return user;
         }
 
+        public async Task UpdateAsync(Usuario usuario)
+        {
+            await userRepo.UpdateAsync(usuario);
+        }
     }
 }

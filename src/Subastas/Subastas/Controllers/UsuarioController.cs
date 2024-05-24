@@ -2,24 +2,38 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Subastas.Database;
-
+using Subastas.Domain;
+using Subastas.Dto;
+using Subastas.Interfaces;
 
 namespace Subastas.Controllers
 {
-    public class UsuarioController(SubastasContext _context) : Controller
+    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+    public class UsuarioController : Controller
     {
-        // GET: UsuarioController
-        [Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
-        public ActionResult Index()
+        private readonly IUserService _userService;
+        private readonly IEncryptionService _encryptManager;
+        public UsuarioController(SubastasContext context, IUserService userService,  IEncryptionService encrypManager)
         {
-            var listaUsuario = _context.Usuarios.ToList();
+            _userService = userService;
+            _encryptManager = encrypManager;
+        }
+        // GET: UsuarioController
+        public async Task<IActionResult> Index()
+        {
+            var listaUsuario = await _userService.GetAllAsync();
             return View(listaUsuario);
         }
 
         // GET: UsuarioController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var usuario = await _userService.GetByIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+            return View(usuario);
         }
 
         // GET: UsuarioController/Create
@@ -31,56 +45,120 @@ namespace Subastas.Controllers
         // POST: UsuarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Usuario usuario)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try {
+                    await _userService.CreateIfNotExistsAsync(usuario);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    ModelState.AddModelError("Error", "Error al crear el usuario");
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View(usuario);
         }
 
         // GET: UsuarioController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var usuario = await _userService.GetByIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var usuarioEditDto = new UsuarioEditDto
+            {
+                IdUsuario = usuario.IdUsuario,
+                NombreUsuario = usuario.NombreUsuario,
+                ApellidoUsuario = usuario.ApellidoUsuario,
+                CorreoUsuario = usuario.CorreoUsuario,
+                EstaActivo = usuario.EstaActivo,
+            };
+
+            return View(usuarioEditDto); 
         }
 
         // POST: UsuarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, UsuarioEditDto usuarioForm)
         {
-            try
+            
+            if (string.IsNullOrEmpty(usuarioForm.NewPassword))
             {
-                return RedirectToAction(nameof(Index));
+                ModelState.Remove("NewPassword");
+                ModelState.Remove("ConfirmPassword");
             }
-            catch
+            var usuarioDb = await _userService.GetByIdAsync(id);
+            if (usuarioDb == null)
             {
-                return View();
+                return NotFound();
             }
-        }
 
+            if (ModelState.IsValid)
+            {
+                usuarioDb.NombreUsuario = usuarioForm.NombreUsuario;
+                usuarioDb.ApellidoUsuario = usuarioForm.ApellidoUsuario;
+                usuarioDb.CorreoUsuario = usuarioForm.CorreoUsuario;
+                usuarioDb.EstaActivo = usuarioForm.EstaActivo;
+
+                if (!string.IsNullOrEmpty(usuarioForm.NewPassword))
+                {
+                    if (usuarioForm.NewPassword == usuarioForm.ConfirmPassword)
+                    {
+                        usuarioDb.Password = _encryptManager.Encrypt(usuarioForm.NewPassword);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "La confirmación de la contraseña no coincide.");
+                        return View(usuarioForm);
+                    }
+                }
+
+                try
+                {
+                    await _userService.UpdateAsync(usuarioDb);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Error al actualizar el usuario: " + ex.Message);
+                }
+            }
+
+            return View(usuarioForm);
+        }
         // GET: UsuarioController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var usuario = await _userService.GetByIdAsync(id);
+
+            return View(usuario);
         }
 
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var borrado = await _userService.DeleteById(id);
+
+                if (borrado)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ViewData["Error"] = "Error al eliminar el usuario";
+                return View();
             }
             catch
             {
+                ViewData["Error"] = "Error al eliminar el usuario";
                 return View();
             }
         }
