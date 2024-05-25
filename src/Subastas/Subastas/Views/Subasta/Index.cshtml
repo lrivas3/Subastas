@@ -4,14 +4,17 @@
     ViewData["Title"] = "Subastas";
 }
 
+<link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
+
 <h1>Subastas</h1>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (var item in Model)
     {
         <div class="col">
-            <div class="card">
-                <img src="@(item?.IdProductoNavigation?.ImagenProducto ?? "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")" class="card-img-top" alt="@item.TituloSubasta">
+            <div class="card h-100" onclick="location.href='@Url.Action("Details", new { id = item.IdSubasta })'" style="cursor: pointer;">
+                <img src="@(item?.IdProductoNavigation?.ImagenProducto ?? "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")"
+                     class="card-img-top img-fixed-size" alt="@item.TituloSubasta">
                 <div class="card-body">
                     <h5 class="card-title">@item.TituloSubasta</h5>
                     <p class="card-text">Monto Inicial: @item.MontoInicial</p>
@@ -20,12 +23,9 @@
                 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                 {
                     <div class="card-footer text-center">
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("Details", new { id = item.IdSubasta })" class="btn btn-primary">Details</a>
-                            <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-secondary">Edit</a>
-                            <a href="@Url.Action("Delete", new { id = item.IdSubasta })" class="btn btn-danger">Delete</a>
-                        </div>
-                    </div>                    
+                        <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-secondary text-white mx-2">Edit</a>
+                        <a href="@Url.Action("Delete", new { id = item.IdSubasta })" class="btn btn-danger text-white mx-2">Delete</a>
+                    </div>
                 }
             </div>
         </div>
