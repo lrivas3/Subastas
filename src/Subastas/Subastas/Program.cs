@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Subasta.Managers;
 using Subastas.Dependencies;
 using Subastas.Services.Shared.Logging.DbLoggerObjects;
 
@@ -14,6 +15,8 @@ namespace Subastas
             builder.Services.AddControllersWithViews();
 
             builder.Services.ConfigureServices(builder.Configuration);
+            
+            builder.Services.AddSignalR();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddCookie("Bearer", o =>
@@ -50,6 +53,8 @@ namespace Subastas
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Subasta}/{action=Index}/{id?}");
+
+            app.MapHub<SubastaHub>("/SubastaHub");
 
             app.Run();
         }
