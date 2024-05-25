@@ -3,18 +3,18 @@
 @{
 }
 
-<div class="container mt-5">
+<div class="container mt-2">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
             <h4>Detalles de la Subasta</h4>
             <hr />
             <div class="container mt-4">
                 <div class="card">
                     <div class="row no-gutters">
-                        <div class="col-md-3">
-                            <img src="@(Model?.IdProductoNavigation?.ImagenProducto)" class="card-img" alt="Imagen de la Subasta">
+                        <div class="col-md-12 text-center" style="padding: 5px 30px">
+                            <img src="@(Model?.IdProductoNavigation?.ImagenProducto)" class="card-img" alt="Imagen de la Subasta" style="max-width: 275px;">
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-12">
                             <div class="card-body">
                                 <h5 class="card-title">@Model.TituloSubasta</h5>
                                 <dl class="row">
@@ -32,41 +32,42 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
             <h4>Pujas de Usuarios</h4>
             <hr />
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Monto</th>
-                        <th>Fecha de Pujada</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var item in Model.Pujas.OrderByDescending(x=> x.MontoPuja))
-                    {
+            <div style="max-height: 400px;overflow: auto;">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>@item.IdUsuarioNavigation.NombreUsuario</td>
-                            <td>@item.MontoPuja</td>
-                            <td>@item.FechaPuja</td>
+                            <th>Usuario</th>
+                            <th>Monto</th>
+                            <th>Fecha de Pujada</th>
                         </tr>
-                    }
-                    <!-- Aquí puedes iterar sobre las pujas de los usuarios y mostrarlas en filas -->
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Pujas.OrderByDescending(x => x.MontoPuja))
+                        {
+                            <tr>
+                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                <td>@item.MontoPuja</td>
+                                <td>@item.FechaPuja</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="row pt-3">
-        <div class="container">
-            <a class="btn btn-primary" asp-controller="Pujas" asp-action="Details" asp-route-id="@Model.IdSubasta">Pujar</a>
 
-            @* @Html.ActionLink("Edit", "Edit", new {  id = Model.IdSubasta }, new { @class = "btn btn-primary" }) *@
-            <a asp-action="Index" class="btn btn-secondary">Regresar</a>
+    <div class="row pt-3 mt-3">
+        <div class="container d-flex justify-content-center">
+            <a class="btn btn-primary text-white mx-2" asp-controller="Pujas" asp-action="Details" asp-route-id="@Model.IdSubasta">Pujar</a>
+            <a asp-action="Index" class="btn btn-secondary text-white mx-2">Regresar</a>
         </div>
     </div>
-    <div class="row mt-5">
-        <div class="col-md-12">
+
+    <div class="row mt-2">
+        <div class="col-md-6 mt-3" style="max-height: 400px;">
             <h4>Participantes de la Subasta</h4>
             <hr />
             <table class="table">
@@ -88,6 +89,94 @@
                     }
                 </tbody>
             </table>
+        </div>
+
+        <div class="col-md-6 mt-3 d-flex flex-column" style="max-height: 400px;">
+            <h4>Chat</h4>
+            <hr />
+            <div class="flex-grow-1 overflow-auto" style="border: 1px solid #ddd; padding: 10px;">
+                <!-- Aquí van los mensajes del chat -->
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 1:</strong> Mensaje de ejemplo.
+                </div>
+                <div class="message">
+                    <strong>Usuario 2:</strong> Otro mensaje de ejemplo.
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Escribe tu mensaje...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">Enviar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
