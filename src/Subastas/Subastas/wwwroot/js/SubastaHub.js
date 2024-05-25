@@ -36,14 +36,14 @@ connection.start().catch(function (err) {
 });
 
 // Ejemplo de cómo enviar pujas y mensajes
-document.querySelector(".btn-primary").addEventListener("click", function (event) {
-    const amount = parseFloat(prompt("Enter bid amount:"));
-    const user = currentUser;
-    connection.invoke("SendBid", user, amount).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
+//document.querySelector(".btn-primary").addEventListener("click", function (event) {
+//    const amount = parseFloat(prompt("Enter bid amount:"));
+//    const user = currentUser;
+//    connection.invoke("SendBid", user, amount).catch(function (err) {
+//        return console.error(err.toString());
+//    });
+//    event.preventDefault();
+//});
 
 document.querySelector(".btn-send-message").addEventListener("click", function (event) {
     const message = document.querySelector("#chat-input").value;

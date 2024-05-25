@@ -1,4 +1,5 @@
-﻿@model Subastas.Domain.Subasta
+﻿@using System.Security.Claims
+@model Subastas.Domain.Subasta
 
 @{
 }
@@ -61,52 +62,55 @@
 
     <div class="row pt-3 mt-3">
         <div class="container d-flex justify-content-center">
-            <a class="btn btn-primary text-white mx-2" asp-controller="Pujas" asp-action="Details" asp-route-id="@Model.IdSubasta">Pujar</a>
+            <button class="btn btn-primary text-white mx-2" id="btnPujar">Pujar</button>
             <a asp-action="Index" class="btn btn-secondary text-white mx-2">Regresar</a>
         </div>
     </div>
 
-    <div class="row mt-2">
-        <div class="col-md-6 mt-3" style="max-height: 400px;">
-            <h4>Participantes de la Subasta</h4>
-            <hr />
-            <table class="table participants-table">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Fecha de Participación</th>
-                    </tr>
-                </thead>
-                <tbody id="participants-table-body">
-                    @foreach (var item in Model.ParticipantesSubasta)
-                    {
-                        <tr>
-                            <td>@item.IdUsuarioNavigation.NombreUsuario</td>
-                            <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
-                            <td>@Model.FechaSubasta</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <div class="col-md-6 mt-3 d-flex flex-column" style="max-height: 400px;">
-            <h4>Chat</h4>
-            <hr />
-            <div class="flex-grow-1 overflow-auto" style="border: 1px solid #ddd; padding: 10px;" id="chat-messages">
-                <!-- Aquí van los mensajes del chat -->
-            </div>
-            <div class="mt-3">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje...">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary btn-send-message" type="button">Enviar</button>
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mt-3 d-flex flex-column" style="max-height: 400px;min-height: 400px;">
+                <h4>Chat</h4>
+                <hr />
+                <div class="flex-grow-1 overflow-auto" style="border: 1px solid #ddd; padding: 10px;" id="chat-messages">
+                    <!-- Aquí van los mensajes del chat -->
+                </div>
+                <div class="mt-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btn-send-message" type="button">Enviar</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-6 col-md-12 mt-3" style="max-height: 400px;min-height: 400px; overflow-y: auto;">
+                <h4>Participantes de la Subasta</h4>
+                <hr />
+                <table class="table participants-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Fecha de Participación</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participants-table-body">
+                        @foreach (var item in Model.ParticipantesSubasta)
+                        {
+                            <tr>
+                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
+                                <td>@Model.FechaSubasta</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
 </div>
 
 @section Scripts {
@@ -114,6 +118,71 @@
 
     <script>
         let currentUser = "@User.Identity.Name";
+
+        document.getElementById("btnPujar").addEventListener("click", function () {
+            Swal.fire({
+                title: 'Ingrese su puja',
+                input: 'number',
+                inputAttributes: {
+                    min: parseFloat(document.getElementById("current-amount").innerText.replace('$', '')) + 1,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Pujar',
+                showLoaderOnConfirm: true,
+                preConfirm: (amount) => {
+                    return fetch('/Pujas/Create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        body: JSON.stringify({
+                            IdSubasta: @Model.IdSubasta,
+                            MontoPuja: amount,
+                            IdUsuario: @User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                                })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error}`
+                            );
+                        });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    if (result.value != undefined && result.value.success) {
+                        
+                        connection.invoke("SendBid", currentUser, result.value.montoPuja).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+
+                        Swal.fire({
+                            title: 'Puja exitosa!',
+                            text: `Su puja de $${result.value.montoPuja} fue aceptada.`,
+                            icon: 'success'
+                        }).then(() => {
+                            event.preventDefault();
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: 'Puja exitosa!',
+                            text: `Ups... ${result.value.message}`,
+                            icon: 'error'
+                        });
+                    }
+                }
+            });
+        });
     </script>
 
     <script src="~/js/SubastaHub.js" asp-append-version="true"></script>

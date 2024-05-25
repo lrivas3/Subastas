@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Subastas.Database;
 using Subastas.Domain;
@@ -34,45 +35,43 @@ namespace Subastas.Controllers
         // POST: PujasController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdSubasta,IdUsuario,MontoPuja")] Puja Puja)
+        public async Task<IActionResult> Create([FromBody] Puja puja)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    Puja.FechaPuja = DateOnly.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
-                    var user = await userService.GetUserWithCuentum(Puja.IdUsuario);
+                    puja.FechaPuja = DateOnly.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                    var user = await userService.GetUserWithCuentum(puja.IdUsuario);
                     if (user == null)
                     {
-                        ViewData["Error"] = "Usuario no encontrado";
-                        return View();
+                        return Json(new { success = false, message = "Usuario no encontrado" });
                     }
-                    if ((Puja.MontoPuja-user.Cuentum.Saldo)>0)
+                    if ((puja.MontoPuja - user.Cuentum.Saldo) > 0)
                     {
-                        ViewData["Error"] = "Tu saldo es insuficiente";
-                        return View();
+                        return Json(new { success = false, message = "Tu saldo es insuficiente" });
                     }
-                    decimal saldo = user.Cuentum.Saldo - Puja.MontoPuja;
+                    decimal saldo = user.Cuentum.Saldo - puja.MontoPuja;
 
-                    var cuenta = await cuentaService.GetByUserIdAsync(Puja.IdUsuario);
+                    var cuenta = await cuentaService.GetByUserIdAsync(puja.IdUsuario);
                     cuenta.Saldo = saldo;
                     bool update = await cuentaService.UpdateCuenta(cuenta);
-                    if (!update) 
+                    if (!update)
                     {
-                        ViewData["Error"] = "No se actualizo tu saldo";
-                        return View();
+                        return Json(new { success = false, message = "No se actualizó tu saldo" });
                     }
-                    await pujaService.CreateAsync(Puja);
-                    return RedirectToAction("Details", "Subasta", new { id = Puja.IdSubasta });
+                    await pujaService.CreateAsync(puja);
 
+                    return Json(new { success = true, message = "Puja realizada con éxito", MontoPuja = puja.MontoPuja });
                 }
-                return View();
+                return Json(new { success = false, message = "Modelo inválido" });
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         // GET: PujasController/Edit/5
         public ActionResult Edit(int id)
