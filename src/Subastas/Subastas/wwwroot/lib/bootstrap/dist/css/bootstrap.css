@@ -71,16 +71,16 @@
 }
 
 body {
-  margin: 0;
-  font-family: var(--bs-body-font-family);
-  font-size: var(--bs-body-font-size);
-  font-weight: var(--bs-body-font-weight);
-  line-height: var(--bs-body-line-height);
-  color: var(--bs-body-color);
-  text-align: var(--bs-body-text-align);
-  background-color: var(--bs-body-bg);
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    margin: 0;
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    text-align: var(--bs-body-text-align);
+    background-color: #d9d9d9;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 hr {
@@ -7833,8 +7833,8 @@ textarea.form-control-lg {
 }
 
 .bg-white {
-  --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-white-rgb), var(--bs-bg-opacity)) !important;
+    --bs-bg-opacity: 1;
+    background-color: #3995B2 !important;
 }
 
 .bg-body {
@@ -11482,3 +11482,43 @@ span {
 .body-container {
     margin: 75px;
 }
+
+.tabla-pujas {
+    background-color: #003E52;
+    color: white;
+}
+
+.tabla-pujas h4 {
+    text-align: center;
+}
+
+.tabla-pujas th {
+    color: white;
+    font-size: 20px;
+    background-color: #002B40;
+    text-align: center;
+}
+
+.tabla-pujas td {
+    color: white;
+    text-align: center;
+}
+
+.tabla-pujas tbody tr:nth-child(even) {
+    background-color: #002B40;
+}
+
+.container-chat {
+    /*background-color: red;*/
+    padding: 50px;
+}
+
+.container-participantes {
+    /*background-color: blue;*/
+    padding: 50px;
+}
+
+/*.container {
+    background-color: white;
+    margin: 20px;
+}*/
