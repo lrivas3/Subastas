@@ -1,53 +1,101 @@
-﻿@model Subastas.Domain.Usuario
+﻿@model Subastas.Dto.UsuarioCuentaViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = Model.Usuario.IdUsuario == 0 ? "Create" : "Edit";
+
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<h1>Create</h1>
-
-<h4>Usuario</h4>
+<h1>@(Model.Usuario.IdUsuario == 0 ? "Create" : "Edit")</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NombreUsuario" class="control-label"></label>
-                <input asp-for="NombreUsuario" class="form-control" />
-                <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+<div class="container">
+    <form asp-action="@(Model.Usuario.IdUsuario == 0 ? "Create" : "Edit")" method="post">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <h4>Usuario</h4>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Usuario.IdUsuario" />
+                <div class="form-group mb-2">
+                    <label asp-for="Usuario.NombreUsuario" class="control-label"></label>
+                    <input asp-for="Usuario.NombreUsuario" class="form-control" />
+                    <span asp-validation-for="Usuario.NombreUsuario" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-2">
+                    <label asp-for="Usuario.ApellidoUsuario" class="control-label"></label>
+                    <input asp-for="Usuario.ApellidoUsuario" class="form-control" />
+                    <span asp-validation-for="Usuario.ApellidoUsuario" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-2">
+                    <label asp-for="Usuario.CorreoUsuario" class="control-label"></label>
+                    <input asp-for="Usuario.CorreoUsuario" class="form-control" />
+                    <span asp-validation-for="Usuario.CorreoUsuario" class="text-danger"></span>
+                </div>  
+                <div class="form-group mb-2">
+                    <label class="control-label">@(Model.Usuario.IdUsuario == 0 ? "Password" : "New Password")</label>
+                    <div class="input-group">
+                        <input asp-for="Usuario.Password" type="password" class="form-control"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()">
+                                <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Usuario.Password" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ApellidoUsuario" class="control-label"></label>
-                <input asp-for="ApellidoUsuario" class="form-control" />
-                <span asp-validation-for="ApellidoUsuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CorreoUsuario" class="control-label"></label>
-                <input asp-for="CorreoUsuario" class="form-control" />
-                <span asp-validation-for="CorreoUsuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EstaActivo" /> @Html.DisplayNameFor(model => model.EstaActivo)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Regresar a la lista</a>
+            <div class="col-md-6 mb-4">
+                <h4>Cuenta</h4>
+                <div class="form-group mb-2">
+                    <label asp-for="Cuenta.Saldo" class="control-label"></label>
+                    @if (isAdmin)
+                    {
+                        <input asp-for="Cuenta.Saldo" class="form-control" type="number" min="0" />
+                    }
+                    else
+                    {
+                        <input asp-for="Cuenta.Saldo" class="form-control" type="number" min="0" disabled/>
+                    }
+                    <span asp-validation-for="Cuenta.Saldo" class="text-danger"></span>
+                </div>
+                <div class="form-group form-check mb-2">
+                    @if (isAdmin)
+                    {
+                        <input class="form-check-input" asp-for="Cuenta.EstaActivo" />
+                    }
+                    else
+                    {
+                        <input class="form-check-input" asp-for="Cuenta.EstaActivo" disabled />
+                    }
+                    <label class="form-check-label" asp-for="Cuenta.EstaActivo"></label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <input type="submit" value="@(Model.Usuario.IdUsuario == 0 ? "Create" : "Save")" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Regresar a la lista</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('Usuario_Password');
+            var togglePasswordIcon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordIcon.classList.remove('fa-eye');
+                togglePasswordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordIcon.classList.remove('fa-eye-slash');
+                togglePasswordIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
 }
