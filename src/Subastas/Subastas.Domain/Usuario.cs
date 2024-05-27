@@ -12,7 +12,7 @@ public partial class Usuario
 
     public string Password { get; set; } = null!;
 
-    public bool EstaActivo { get; set; }
+    public bool EstaActivo { get; set; } = true;
 
     public virtual Cuenta? Cuentum { get; set; }
 

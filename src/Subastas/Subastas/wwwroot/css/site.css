@@ -29,3 +29,7 @@ body {
     background-size: cover;
     background-position: center;
 }
+
+div > a, td > a {
+    color: white !important;
+}
