@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Subastas.Interfaces;
 using System.Data.Common;
 using Subastas.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
+using Subastas.Domain;
 
 namespace Subastas.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class SubastaController(
         IProductoService productoService, 
-        ISubastaService subastaService) : Controller
+        ISubastaService subastaService,
+        IUserService userService) : Controller
     {
         public async Task<IActionResult> Index()
         {
@@ -83,6 +86,53 @@ namespace Subastas.Controllers
             {
                 return View(subasta);
             }
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = new { success = false, errorMessage = "" };
+
+            try
+            {
+                var subasta = await subastaService.GetSubastaWithPujaAndUsers(id);
+
+                var usersPujas = subasta.Pujas
+                    .GroupBy(p => p.IdUsuario)
+                    .Select(g => new
+                    {
+                        UserId = g.Key,
+                        SumaDePujas = g.Sum(p => p.MontoPuja)
+                    })
+                    .ToList();
+
+                var deleted = await subastaService.DeleteById(id);
+
+                if (deleted)
+                {
+                    foreach (var user in usersPujas)
+                    {
+                        var usuario = await userService.GetUserWithCuentum(user.UserId);
+
+                        usuario.Cuentum.Saldo += user.SumaDePujas;
+
+                        await userService.UpdateAsync(usuario);
+                    }
+
+                    result = new { success = true, errorMessage = "" };
+                }
+                else
+                {
+                    result = new { success = false, errorMessage = "Parece que hubo un error" };
+                }
+            }
+            catch (Exception ex)
+            {
+                result = new { success = false, errorMessage = ex.Message };
+            }
+
+            return Json(result);
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Subastas.Services
                 await subastaRepository.DeleteAsync(idSubasta);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO: SAVELOG
                 return false;
