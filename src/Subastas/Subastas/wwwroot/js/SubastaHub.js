@@ -1,14 +1,14 @@
 ﻿const connection = new signalR.HubConnectionBuilder().withUrl("/SubastaHub").build();
 
 connection.on("ReceiveBid", function (user, amount) {
-    // Actualiza la lista de pujas y el monto actual
+    let formattedAmount = `$${parseFloat(amount).toFixed(2)}`;
+
     const bidTable = document.querySelector("#bid-table-body");
     const newRow = document.createElement("tr");
-    newRow.innerHTML = `<td>${user}</td><td>${amount}</td><td>${new Date().toLocaleString()}</td>`;
+    newRow.innerHTML = `<td>${user}</td><td>${formattedAmount}</td><td>${new Date().toLocaleString()}</td>`;
     bidTable.prepend(newRow);
 
-    // Actualiza el monto actual
-    document.querySelector("#current-amount").innerText = `$${amount}`;
+    document.querySelector("#current-amount").innerText = formattedAmount;
 });
 
 connection.on("ReceiveMessage", function (user, message) {
@@ -26,7 +26,12 @@ connection.on("UpdateParticipants", function (participants) {
     participantsTable.innerHTML = "";
     participants.forEach(participant => {
         const newRow = document.createElement("tr");
-        newRow.innerHTML = `<td>${participant.nombreUsuario}</td><td>${participant.correoUsuario}</td><td>${participant.fechaSubasta}</td>`;
+
+        // Asegúrate de que participant.fechaSubasta sea una fecha en un formato que JavaScript pueda interpretar
+        let fechaSubasta = new Date(participant.fechaSubasta);
+        let fechaSubastaLocal = fechaSubasta.toLocaleString();
+
+        newRow.innerHTML = `<td>${participant.nombreUsuario}</td><td>${participant.correoUsuario}</td><td>${fechaSubastaLocal}</td>`;
         participantsTable.appendChild(newRow);
     });
 });
@@ -40,14 +45,26 @@ connection.start().then(() => {
 });
 
 document.querySelector(".btn-send-message").addEventListener("click", function (event) {
+    sendMessage();
+    event.preventDefault();
+});
+
+document.querySelector("#chat-input").addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        sendMessage();
+        event.preventDefault();
+    }
+});
+
+function sendMessage() {
     const message = document.querySelector("#chat-input").value;
     const user = currentUser;
     connection.invoke("SendMessage", user, message, currentSubastaId).catch(function (err) {
         return console.error(err.toString());
     });
     document.querySelector("#chat-input").value = "";
-    event.preventDefault();
-});
+}
+
 
 connection.on("ReceiveParticipants", function (participants) {
     const participantsTable = document.querySelector("#participants-table-body");
