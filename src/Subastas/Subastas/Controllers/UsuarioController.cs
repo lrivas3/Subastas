@@ -10,10 +10,11 @@ using System.Text;
 
 namespace Subastas.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
     public class UsuarioController(IUserService userService, IEncryptionService encrypManager, ICuentaService cuentaService, IConfiguration configuration) : Controller
     {
+
         // GET: UsuarioController
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var listaUsuario = await userService.GetAllAsync();
@@ -21,7 +22,7 @@ namespace Subastas.Controllers
         }
 
         // GET: UsuarioController/Details/5
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult> Details(int id)
         {
             var usuario = await userService.GetByIdAsync(id);
@@ -53,6 +54,7 @@ namespace Subastas.Controllers
 
 
         // GET: UsuarioController/Create
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public ActionResult Create()
         {
             return View(new UsuarioCuentaViewModel());
@@ -61,6 +63,7 @@ namespace Subastas.Controllers
         // POST: UsuarioController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult> Create(UsuarioCuentaViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -81,6 +84,7 @@ namespace Subastas.Controllers
         }
 
         // GET: UsuarioController/Edit/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult> Edit(int id)
         {
             var usuario = await userService.GetByIdAsync(id);
@@ -113,6 +117,7 @@ namespace Subastas.Controllers
         // POST: UsuarioController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult> Edit(int id, UsuarioCuentaViewModel viewModel)
         {
             if (id != viewModel.Usuario.IdUsuario)
@@ -160,6 +165,7 @@ namespace Subastas.Controllers
         }
 
         // GET: UsuarioController/Delete/5
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var usuario = await userService.GetByIdAsync(id);
@@ -170,6 +176,7 @@ namespace Subastas.Controllers
         // POST: UsuarioController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
