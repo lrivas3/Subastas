@@ -36,7 +36,7 @@ namespace Subastas.Services
             return await pujaRepository.ExistsByPredicate(m => m.IdPuja.Equals(idPuja));
         }
 
-        public async Task<bool> ExistsByDatePujaAsync(DateOnly fechaPuja)
+        public async Task<bool> ExistsByDatePujaAsync(DateTime fechaPuja)
         {
             return await pujaRepository.ExistsByPredicate(m => m.FechaPuja == fechaPuja);
         }
@@ -46,7 +46,7 @@ namespace Subastas.Services
             return await pujaRepository.GetAllAsync();
         }
 
-        public async Task<Puja> GetByDatePujaAsync(DateOnly fechaPuja)
+        public async Task<Puja> GetByDatePujaAsync(DateTime fechaPuja)
         {
             return await pujaRepository.GetByPredicate(m => m.FechaPuja == fechaPuja);
         }

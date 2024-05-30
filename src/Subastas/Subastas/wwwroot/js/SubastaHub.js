@@ -31,24 +31,18 @@ connection.on("UpdateParticipants", function (participants) {
     });
 });
 
-connection.start().catch(function (err) {
+connection.start().then(() => {
+    connection.invoke("UpdateParticipants", currentUser, true, currentSubastaId).catch(function (err) {
+        return console.error(err.toString());
+    });
+}).catch(function (err) {
     return console.error(err.toString());
 });
-
-// Ejemplo de cómo enviar pujas y mensajes
-//document.querySelector(".btn-primary").addEventListener("click", function (event) {
-//    const amount = parseFloat(prompt("Enter bid amount:"));
-//    const user = currentUser;
-//    connection.invoke("SendBid", user, amount).catch(function (err) {
-//        return console.error(err.toString());
-//    });
-//    event.preventDefault();
-//});
 
 document.querySelector(".btn-send-message").addEventListener("click", function (event) {
     const message = document.querySelector("#chat-input").value;
     const user = currentUser;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+    connection.invoke("SendMessage", user, message, currentSubastaId).catch(function (err) {
         return console.error(err.toString());
     });
     document.querySelector("#chat-input").value = "";
@@ -66,7 +60,7 @@ connection.on("ReceiveParticipants", function (participants) {
 });
 
 window.addEventListener("beforeunload", function () {
-    connection.invoke("UpdateParticipants", currentUser, false).catch(function (err) {
+    connection.invoke("UpdateParticipants", currentUser, false, currentSubastaId).catch(function (err) {
         return console.error(err.toString());
     });
 });

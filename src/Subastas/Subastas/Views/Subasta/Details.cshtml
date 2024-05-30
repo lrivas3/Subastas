@@ -51,7 +51,7 @@
                             <tr>
                                 <td>@item.IdUsuarioNavigation.NombreUsuario</td>
                                 <td>@item.MontoPuja</td>
-                                <td>@item.FechaPuja</td>
+                                <td>@item.FechaPuja.ToString("dd/M/yyyy, H:mm:ss")</td>
                             </tr>
                         }
                     </tbody>
@@ -118,6 +118,7 @@
 
     <script>
         let currentUser = "@User.Identity.Name";
+        let currentSubastaId = "@Model.IdSubasta";
 
         document.getElementById("btnPujar").addEventListener("click", function () {
             Swal.fire({
@@ -160,8 +161,8 @@
                 if (result.isConfirmed) {
 
                     if (result.value != undefined && result.value.success) {
-                        
-                        connection.invoke("SendBid", currentUser, result.value.montoPuja).catch(function (err) {
+
+                        connection.invoke("SendBid", currentUser, result.value.montoPuja, currentSubastaId).catch(function (err) {
                                 return console.error(err.toString());
                             });
 
