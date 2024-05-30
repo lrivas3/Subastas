@@ -27,8 +27,10 @@ namespace Subastas.Domain
         [Required(ErrorMessage = "La fecha de finalización de la subasta es obligatoria")]
         public DateTime FechaSubastaFin { get; set; }
 
+        [Display(Name = "Subasta finalizada")]
         public bool Finalizada { get; set; }
 
+        [Display(Name = "Subasta activa")]
         public bool EstaActivo { get; set; }
 
         public int? IdUsuario { get; set; }

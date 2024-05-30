@@ -118,5 +118,10 @@ namespace Subastas.Services
         {
             return await subastaRepository.GetSubastaWithPujaAndUsers(idSubasta);
         }
+
+        public async Task UpdateAsync(Subasta subasta)
+        {
+            await subastaRepository.UpdateAsync(subasta);
+        }
     }
 }
