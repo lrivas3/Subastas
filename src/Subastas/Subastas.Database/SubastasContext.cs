@@ -161,7 +161,7 @@ public partial class SubastasContext : DbContext
 
             entity.HasOne(d => d.IdSubastaNavigation).WithMany(p => p.Pujas)
                 .HasForeignKey(d => d.IdSubasta)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade) // Cambiado a DeleteBehavior.Cascade
                 .HasConstraintName("FK_pujas_subastas");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Pujas)

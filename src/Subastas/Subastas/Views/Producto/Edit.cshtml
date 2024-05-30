@@ -9,7 +9,7 @@
 
 <form asp-action="Edit" asp-controller="Producto" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
-    
+
     <input type="hidden" name="id" value="@Model.IdProducto" />
 
     <div class="form-group">
@@ -35,11 +35,13 @@
 
     <div class="form-group">
         <label for="imagen" class="control-label">Imagen Actual</label>
-        @if (Model.ImagenProducto != null)
-        {
-            <img src="@Model.ImagenProducto" alt="Imagen del Producto" style="max-height: 200px;" />
-        }
-        <label for="imagen">Seleccionar nueva imagen (opcional):</label>
+        <div>
+            @if (Model.ImagenProducto != null)
+            {
+                <img src="@Model.ImagenProducto" alt="Imagen del Producto" style="max-height: 200px; display: block; margin-bottom: 10px;" />
+            }
+        </div>
+        <label for="imagen" class="control-label">Seleccionar nueva imagen (opcional):</label>
         <input type="file" name="imagen" class="form-control" />
     </div>
 

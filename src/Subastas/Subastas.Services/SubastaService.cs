@@ -64,7 +64,7 @@ namespace Subastas.Services
                 await subastaRepository.DeleteAsync(idSubasta);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO: SAVELOG
                 return false;
@@ -117,6 +117,11 @@ namespace Subastas.Services
         public async Task<Subasta> GetSubastaWithPujaAndUsers(int idSubasta)
         {
             return await subastaRepository.GetSubastaWithPujaAndUsers(idSubasta);
+        }
+
+        public async Task UpdateAsync(Subasta subasta)
+        {
+            await subastaRepository.UpdateAsync(subasta);
         }
     }
 }

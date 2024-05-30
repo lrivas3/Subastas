@@ -7,29 +7,38 @@
 <h1>Productos</h1>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    @foreach (var item in Model)
+    @if (Model == null || !Model.Any())
     {
         <div class="col">
-            <div class="card">
-                <img src="@(!string.IsNullOrEmpty(item.ImagenProducto) ? item.ImagenProducto : "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")"
-                     class="card-img-top img-fixed-size" alt="@item.NombreProducto">
-                <div class="card-body">
-                    <h5 class="card-title">@item.NombreProducto</h5>
-                    <p class="card-text">@item.DescripcionProducto</p>
-                    <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
-                    <p class="card-text">Subastado: @(item.EstaSubastado ? "Sí" : "No")</p>
-                </div>
-                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                {
-                    <div class="card-footer text-center">
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-primary">Details</a>
-                            <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-secondary">Edit</a>
-                            <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger">Delete</a>
-                        </div>
-                    </div>
-                }
-            </div>
+            <h1>Parece que no hay Productos!</h1>
         </div>
+    }
+    else
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card">
+                    <img src="@(!string.IsNullOrEmpty(item.ImagenProducto) ? item.ImagenProducto : "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")"
+                         class="card-img-top img-fixed-size" alt="@item.NombreProducto">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.NombreProducto</h5>
+                        <p class="card-text">@item.DescripcionProducto</p>
+                        <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
+                        <p class="card-text">Subastado: @(item.EstaSubastado ? "Sí" : "No")</p>
+                    </div>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <div class="card-footer text-center">
+                            <div class="btn-group" role="group">
+                                <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-primary">Details</a>
+                                <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-secondary">Edit</a>
+                                <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     }
 </div>
