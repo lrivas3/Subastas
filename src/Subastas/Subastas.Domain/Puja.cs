@@ -6,7 +6,7 @@ public partial class Puja
 
     public decimal MontoPuja { get; set; }
 
-    public DateOnly FechaPuja { get; set; }
+    public DateTime FechaPuja { get; set; }
 
     public int IdSubasta { get; set; }
 

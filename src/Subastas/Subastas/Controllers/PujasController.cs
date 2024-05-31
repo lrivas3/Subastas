@@ -41,7 +41,7 @@ namespace Subastas.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    puja.FechaPuja = DateOnly.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                    puja.FechaPuja = DateTime.Now;
                     var user = await userService.GetUserWithCuentum(puja.IdUsuario);
                     if (user == null)
                     {

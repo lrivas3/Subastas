@@ -50,8 +50,8 @@
                         {
                             <tr>
                                 <td>@item.IdUsuarioNavigation.NombreUsuario</td>
-                                <td>@item.MontoPuja</td>
-                                <td>@item.FechaPuja</td>
+                                <td>$@item.MontoPuja</td>
+                                <td>@item.FechaPuja.ToString("dd/M/yyyy, H:mm:ss")</td>
                             </tr>
                         }
                     </tbody>
@@ -75,7 +75,7 @@
                 <div class="flex-grow-1 overflow-auto" style="border: 1px solid #ddd; padding: 10px;" id="chat-messages">
                     <!-- Aquí van los mensajes del chat -->
                 </div>
-                <div class="mt-3">
+                <div class="mt-1">
                     <div class="input-group">
                         <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje...">
                         <div class="input-group-append">
@@ -118,6 +118,7 @@
 
     <script>
         let currentUser = "@User.Identity.Name";
+        let currentSubastaId = "@Model.IdSubasta";
 
         document.getElementById("btnPujar").addEventListener("click", function () {
             Swal.fire({
@@ -160,8 +161,8 @@
                 if (result.isConfirmed) {
 
                     if (result.value != undefined && result.value.success) {
-                        
-                        connection.invoke("SendBid", currentUser, result.value.montoPuja).catch(function (err) {
+
+                        connection.invoke("SendBid", currentUser, result.value.montoPuja, currentSubastaId).catch(function (err) {
                                 return console.error(err.toString());
                             });
 

@@ -8,9 +8,9 @@ namespace Subastas.Interfaces
         Task<Puja> CreateAsync(Puja newPuja);
         Task<Puja> CreateIfNotExistsAsync(Puja newPuja);
         Task<bool> ExistsByIdAsync(int idPuja);
-        Task<bool> ExistsByDatePujaAsync(DateOnly fechaPuja);
+        Task<bool> ExistsByDatePujaAsync(DateTime fechaPuja);
         Task<Puja> GetByIdAsync(int idPuja);
-        Task<Puja> GetByDatePujaAsync(DateOnly fechaPuja);
+        Task<Puja> GetByDatePujaAsync(DateTime fechaPuja);
         Task<bool> DeleteById(int idPuja);
     }
 }
