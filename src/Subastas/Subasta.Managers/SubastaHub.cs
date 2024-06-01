@@ -21,23 +21,11 @@ namespace Subasta.Managers
 
         public async Task UpdateParticipants(string user, bool joined, string subastaId)
         {
-            // Si el usuario no está asociado a ninguna subasta
-            if (string.IsNullOrEmpty(subastaId) && joined && !participants.Exists(p => p.NombreUsuario == user))
-            {
-                participants.Add(new Participant
-                {
-                    NombreUsuario = user,
-                    CorreoUsuario = $"{user}@example.com",
-                    FechaSubasta = DateTime.Now
-                });
+            var connectionId = Context.ConnectionId;
 
-                return;
-            }
-
-            // Si el usuario se une a una subasta
             if (joined)
             {
-                var participant = participants.Find(p => p.NombreUsuario == user);
+                var participant = participants.Find(p => p.NombreUsuario == user && p.Group == subastaId);
                 if (participant == null)
                 {
                     participants.Add(new Participant
@@ -45,45 +33,48 @@ namespace Subasta.Managers
                         NombreUsuario = user,
                         CorreoUsuario = $"{user}@example.com",
                         Group = subastaId,
-                        FechaSubasta = DateTime.Now
+                        FechaSubasta = DateTime.Now,
+                        ConnectionId = connectionId
                     });
                 }
-                else
-                {
-                    // Actualizamos el grupo del usuario
-                    participant.Group = subastaId;
-                }
 
-                // Agregamos al usuario al grupo en SignalR
-                await Groups.AddToGroupAsync(Context.ConnectionId, subastaId);
+                // Agregar el usuario al grupo de SignalR
+                await Groups.AddToGroupAsync(connectionId, subastaId);
 
-                // Notificamos solo al grupo correspondiente
+                // Notificar solo al grupo correspondiente
                 await Clients.Group(subastaId).SendAsync("UpdateParticipants", participants.Where(p => p.Group == subastaId).ToList());
             }
             else
             {
-                // Si el usuario se va de la subasta
-                participants.RemoveAll(p => p.NombreUsuario == user && p.Group == subastaId);
+                // Remover el usuario del grupo y de la lista de participantes para esa subasta
+                participants.RemoveAll(p => p.NombreUsuario == user && p.Group == subastaId && p.ConnectionId == connectionId);
 
-                // Quitamos al usuario del grupo en SignalR
-                await Groups.RemoveFromGroupAsync(Context.ConnectionId, subastaId);
+                // Quitar el usuario del grupo de SignalR
+                await Groups.RemoveFromGroupAsync(connectionId, subastaId);
 
-                // Notificamos solo al grupo correspondiente
+                // Notificar solo al grupo correspondiente
                 await Clients.Group(subastaId).SendAsync("UpdateParticipants", participants.Where(p => p.Group == subastaId).ToList());
             }
         }
 
         public override async Task OnConnectedAsync()
         {
-            var user = Context.User.Identity.Name;
-            await UpdateParticipants(user, true, null);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            var connectionId = Context.ConnectionId;
             var user = Context.User.Identity.Name;
-            await UpdateParticipants(user, false, null);
+
+            // Obtener todos los grupos en los que estaba el usuario
+            var userGroups = participants.Where(p => p.ConnectionId == connectionId).Select(p => p.Group).ToList();
+
+            foreach (var group in userGroups)
+            {
+                await UpdateParticipants(user, false, group);
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -93,6 +84,7 @@ namespace Subasta.Managers
             public string CorreoUsuario { get; set; }
             public string Group { get; set; }
             public DateTime FechaSubasta { get; set; }
+            public string ConnectionId { get; set; }
         }
     }
 }
