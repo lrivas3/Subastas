@@ -21,15 +21,298 @@ body {
   margin-bottom: 60px;
 }
 
+.container,
+.container-fluid,
+.container-xxl,
+.container-xl,
+.container-lg,
+.container-md,
+.container-sm {
+    width: 100%;
+    max-width: calc(100% - 100px); /* Calcula el ancho menos el padding total */
+    margin-right: auto; /* Centra horizontalmente */
+    margin-left: auto; /* Centra horizontalmente */
+}
+
+
+.card-title {
+    text-align: center;
+    font-weight: bold;
+}
+
+.card-text {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.card-text-monto {
+    text-align: center;
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.bg-active {
+    background-color: #4CAF50;
+    color: white;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-inactive {
+    background-color: #A1ACB5;
+    color: white;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer {
+    background: white;
+}
+
 .img-fixed-size {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
-    background-color: #f0f0f0;
+    height: 200px;
+    object-fit: contain;
     background-size: cover;
     background-position: center;
+    padding: 0px 20px 0px 20px;
 }
 
 div > a, td > a {
+    color: #3995B2 !important;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-footer:last-child {
+    border-radius: 15px;
+    background-color: transparent;
+}
+
+.text-primary {
+    --bs-text-opacity: 1;
     color: white !important;
 }
+
+a {
+    color: black !important;
+    text-decoration: underline;
+}
+
+.container .detalles-subastas {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    padding-bottom: 70px;
+}
+
+.tabla-pujas {
+    background-color: #003E52;
+    color: white;
+    border-radius: 10px;
+    padding-top: 30px;
+    min-width: 30%;
+}
+
+.tabla-pujas h4 {
+    text-align: center;
+    font-weight: bold;
+}
+
+.tabla-pujas h6 {
+    text-align: center;
+}
+
+.tabla-pujas th {
+    color: white;
+    font-size: 16px;
+    background-color: #002B40;
+    text-align: center;
+}
+
+.tabla-pujas td {
+    color: white;
+    text-align: center;
+    font-size: 14px;
+}
+
+.tabla-pujas p {
+    color: white;
+    text-align: center;
+    font-size: 12px;
+}
+
+.tabla-pujas row .row > * {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.monto {
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 40px;
+}
+
+.btn-pujar {
+    color: #fff;
+    background-color: #3995B2;
+    border-color: #3995B2;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 5px;
+    border-radius: 8px;
+    width: 50%;
+    font-weight: bold;
+}
+
+.btn-pujar:hover {
+    color: #fff;
+    background-color: #002B40;
+    border-color: white;
+}
+
+.btn-return {
+    display: flex;
+    align-items: center;
+}
+
+.btn-return a {
+    margin-left: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.icon-details {
+    height: 20px;
+    margin-right: 10px;
+}
+
+.detail-subastas {
+    color: #3C3C3C;
+}
+
+/* Estilo para el contenedor del chat */
+.chat-container {
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    min-height: 400px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none; /* Oculto por defecto */
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-body {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 50px);
+    padding: 10px;
+    height: 340px;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.open-chat {
+    position: fixed;
+    right: 20px;
+    z-index: 1000;
+}
+
+.open-chat button {
+    display: block;
+}
+
+.btn-send-message {
+    color: #fff;
+    background-color: #3995B2;
+    border-color: #3995B2;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 8px;
+    border-radius: 2px;
+}
+
+.open-chat {
+    position: fixed;
+    bottom: 0;
+    z-index: 1000;
+}
+
+.btn-chat {
+    color: #fff;
+    background-color: #3995B2;
+    border-color: #3995B2;
+    border: 1px solid transparent;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 10px 10px 0px 0px;
+    width: 150px;
+    font-weight: bold;
+}
+
+#close-chat {
+    background-color: #3995B2;
+    border: none;
+    color: white;
+}
+
+#close-chat:hover {
+    background-color: #003e52;
+    border: none;
+    color: white;
+}
+
+.btn-chat {
+    background-color: #3995B2;
+    border-color: white;
+    border: 1px solid transparent;
+}
+
+.btn-chat:hover {
+    background-color: #003e52;
+    border-color: white;
+    border: 1px solid transparent;
+}C

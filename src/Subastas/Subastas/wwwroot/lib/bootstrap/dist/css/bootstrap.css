@@ -229,7 +229,7 @@ sup {
 }
 
 a {
-  color: #2535AD !important;
+  color: black !important;
   text-decoration: underline;
 }
 a:hover {
@@ -11484,7 +11484,7 @@ span {
 }
 
 .tabla-pujas {
-    background-color: #003E52;
+    background-color: red;
     color: white;
 }
 

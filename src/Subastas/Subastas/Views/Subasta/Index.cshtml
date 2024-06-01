@@ -6,14 +6,12 @@
 
 <link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
 
-<h1>Subastas</h1>
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="row row-cols-1 row-cols-md-5 g-4">
 
     @if (Model == null || !Model.Any())
     {
         <div class="col">
-            <h1>Parece que no hay Subastas!</h1>
+            <h1>¡Parece que no hay Subastas!</h1>
         </div>
     }
     else
@@ -27,9 +25,13 @@
                              class="card-img-top img-fixed-size" alt="@item.TituloSubasta">
                         <div class="card-body">
                             <h5 class="card-title">@item.TituloSubasta</h5>
-                            <p class="card-text">Monto Inicial: @item.MontoInicial</p>
-                            <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
+                            <p class="card-text-monto">$@item.MontoInicial</p>
+                            <p class="card-text">Inicio: @item.FechaSubasta</p>
+                            <div class="@(item.EstaActivo ? "bg-active" : "bg-inactive") card-text">
+                                @(item.EstaActivo ? "Subasta activa" : "Subasta inactiva")
+                            </div>
                         </div>
+
                     </a>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {

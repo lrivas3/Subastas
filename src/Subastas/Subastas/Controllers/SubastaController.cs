@@ -85,8 +85,18 @@ namespace Subastas.Controllers
 
                 if (subasta != null)
                 {
-                    decimal priceNow = subasta.MontoInicial;
-                    subasta.MontoInicial = subasta.Pujas.Max(s => s.MontoPuja);
+                    decimal? maxMontoPuja = subasta.Pujas.Any() ? (decimal?)subasta.Pujas.Max(s => s.MontoPuja) : null;
+                    ViewBag.MaxMontoPuja = maxMontoPuja;
+
+                    if (maxMontoPuja.HasValue)
+                    {
+                        // Obtener el IdUsuario correspondiente al monto de puja más alto
+                        int idUsuarioMaxPuja = subasta.Pujas.First(p => p.MontoPuja == maxMontoPuja).IdUsuario;
+
+                        // Obtener el nombre del usuario con el IdUsuario encontrado
+                        var usuarioConMaxPuja = await userService.GetByIdAsync(idUsuarioMaxPuja);
+                        ViewBag.NombreUsuarioMaxPuja = usuarioConMaxPuja.NombreUsuario;
+                    }
                 }
                 return View(subasta);
             }
@@ -95,6 +105,7 @@ namespace Subastas.Controllers
                 return View(subasta);
             }
         }
+
 
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
