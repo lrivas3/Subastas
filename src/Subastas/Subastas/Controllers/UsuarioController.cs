@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Subastas.Domain;
 using Subastas.Dto;
 using Subastas.Interfaces;
 using System.Net.Http.Headers;
@@ -196,5 +198,30 @@ namespace Subastas.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CargarMonto(int userId, decimal monto)
+        {
+            try
+            {
+                var usuario = await userService.GetUserWithCuentum(userId);
+
+                if (usuario == null)
+                {
+                    return Json(new { success = false, message = "Usuario no encontrado" });
+                }
+
+                usuario.Cuentum.Saldo += monto;
+
+                await userService.UpdateAsync(usuario);
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

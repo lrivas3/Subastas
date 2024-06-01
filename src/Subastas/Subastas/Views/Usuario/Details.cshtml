@@ -56,58 +56,92 @@
 
     <script>
         function showPayPalModal() {
-            Swal.fire({
-                title: 'Cargar Saldo con PayPal',
-                html: `
-                            <input type="number" id="amount" class="swal2-input" placeholder="Ingrese el monto" min="1">
-                        `,
-                showCancelButton: true,
-                confirmButtonText: 'Cargar',
-                cancelButtonText: 'Cancelar',
-                preConfirm: () => {
-                    const amount = Swal.getPopup().querySelector('#amount').value;
-                    if (!amount || amount <= 0) {
-                        Swal.showValidationMessage('Por favor, ingrese un monto válido');
-                    }
-                    return { amount: amount };
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const amount = result.value.amount;
-                    cargarSaldo(amount);
-                }
-            });
-        }
+            $.getJSON('@Url.Action("GetClientId", "PayPal")', function (data) {
+                Swal.fire({
+                    title: 'Cargar Saldo con PayPal',
+                    html: `
+                                <input type="number" id="amount" class="swal2-input" placeholder="Ingrese el monto" min="1">
+                                <div id="paypal-button-container"></div>
+                            `,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: 'Cancelar',
+                    didOpen: () => {
+                        const amountInput = Swal.getPopup().querySelector('#amount');
 
-        function cargarSaldo(amount) {
-            $.ajax({
-                url: '@Url.Action("CargarSaldo", "Usuario")',
-                type: 'POST',
-                data: { amount: amount, userId: '@Model.Usuario.IdUsuario' },
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: 'El saldo se ha cargado correctamente.'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un problema al cargar el saldo. Inténtelo nuevamente.'
-                        });
+                        // Load the PayPal SDK
+                        const script = document.createElement('script');
+                        script.src = `https://www.paypal.com/sdk/js?client-id=${data.clientId}&components=buttons,marks,funding-eligibility`;
+                        script.onload = function () {
+                            paypal.Buttons({
+                                createOrder: function (data, actions) {
+                                    const amount = amountInput.value;
+                                    if (!amount || amount <= 0) {
+                                        Swal.showValidationMessage('Por favor, ingrese un monto válido');
+                                        return;
+                                    }
+                                    return actions.order.create({
+                                        purchase_units: [{
+                                            amount: {
+                                                value: amount,
+                                                currency_code: 'USD' // Especifica la moneda
+                                            }
+                                        }]
+                                    });
+                                },
+                                onApprove: function (data, actions) {
+                                    return actions.order.capture().then(function (details) {
+                                        // Llamada AJAX para cargar el monto a la cuenta del usuario
+                                        const userId = '@Model.Usuario.IdUsuario';
+                                        const amount = Swal.getPopup().querySelector('#amount').value;
+
+                                        $.ajax({
+                                            url: '@Url.Action("CargarMonto", "Usuario")',
+                                            type: 'POST',
+                                            data: { userId: userId, monto: amount },
+                                            success: function (response) {
+                                                if (response.success) {
+                                                    Swal.fire({
+                                                        icon: 'success',
+                                                        title: 'Transacción completada',
+                                                        text: 'Gracias, ' + details.payer.name.given_name + '!'
+                                                    }).then(() => {
+                                                        location.reload();
+                                                    });
+                                                } else {
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Error',
+                                                        text: 'Hubo un problema al cargar el saldo. Inténtelo nuevamente.'
+                                                    });
+                                                    console.error('Error al cargar el monto:', response.message);
+                                                }
+                                            },
+                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: 'Hubo un problema con el servidor. Por favor, inténtelo nuevamente.'
+                                                });
+                                                console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+                                            }
+                                        });
+                                    });
+                                },
+                                onError: function (err) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Hubo un problema con el pago. Por favor, inténtelo nuevamente.'
+                                    });
+                                    console.error('Error de PayPal:', err);
+                                }
+                            }).render('#paypal-button-container');
+
+                        };
+                        document.head.appendChild(script);
                     }
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Hubo un problema al cargar el saldo. Inténtelo nuevamente.'
-                    });
-                }
+                });
             });
         }
     </script>
