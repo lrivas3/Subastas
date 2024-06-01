@@ -78,6 +78,11 @@ namespace Subasta.Managers
             await base.OnDisconnectedAsync(exception);
         }
 
+        public async Task SubastaTerminada(string administrador, string ganador, string subastaId)
+        {
+            await Clients.Group(subastaId).SendAsync("ReceiveSubastaTerminada", administrador, ganador);
+        }
+
         public class Participant
         {
             public string NombreUsuario { get; set; }

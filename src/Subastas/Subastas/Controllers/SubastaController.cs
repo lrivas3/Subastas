@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
+using Subasta.Managers;
 using Subastas.Interfaces;
 using Subastas.Interfaces.Services;
 using System.Data.Common;
@@ -11,7 +13,8 @@ namespace Subastas.Controllers
     public class SubastaController(
         IProductoService productoService, 
         ISubastaService subastaService,
-        IUserService userService) : Controller
+        IUserService userService,
+        IHubContext<SubastaHub> hubContext) : Controller
     {
         public async Task<IActionResult> Index()
         {
@@ -182,6 +185,42 @@ namespace Subastas.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TerminarSubasta(int idSubasta)
+        {
+            try
+            {
+                var subasta = await subastaService.GetSubastaWithPujaAndUsers(idSubasta);
+
+                if (subasta == null)
+                {
+                    return NotFound();
+                }
+
+                subasta.EstaActivo = false;
+                var ganador = subasta.Pujas.OrderByDescending(p => p.MontoPuja).FirstOrDefault()?.IdUsuarioNavigation;
+
+                if (ganador == null)
+                {
+                    return NotFound();
+                }
+
+                subasta.IdUsuario = ganador.IdUsuario;
+
+                await subastaService.UpdateAsync(subasta);
+
+                string administrador = User.Identity.Name;
+
+                await hubContext.Clients.Group(subasta.IdSubasta.ToString()).SendAsync("ReceiveSubastaTerminada", administrador, ganador.NombreUsuario);
+
+                return Ok(new {success = true});
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

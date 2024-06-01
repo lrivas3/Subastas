@@ -2,6 +2,8 @@
 @model Subastas.Domain.Subasta
 
 @{
+    bool isAdmin = User.IsInRole("Admin");
+    bool isSubastaActiva = Model.EstaActivo;
 }
 
 <div class="container mt-2">
@@ -24,7 +26,7 @@
                                     <dt class="col-sm-3">Monto actual:</dt>
                                     <dd class="col-sm-9" id="current-amount">$@Model.MontoInicial</dd>
                                     <dt class="col-sm-3">Estado:</dt>
-                                    <dd class="col-sm-9">@Model.EstaActivo</dd>
+                                    <dd class="col-sm-9">@(Model.EstaActivo ? "En Curso" : "Finalizada")</dd>
                                 </dl>
                             </div>
                         </div>
@@ -60,11 +62,18 @@
         </div>
     </div>
 
-    <div class="row pt-3 mt-3">
-        <div class="container d-flex justify-content-center">
-            <button class="btn btn-primary text-white mx-2" id="btnPujar">Pujar</button>
-            <a asp-action="Index" class="btn btn-secondary text-white mx-2">Regresar</a>
+    @if (isAdmin && isSubastaActiva)
+    {
+        <div class="row pt-3 mt-3">
+            <div class="container d-flex justify-content-center">
+                <button class="btn btn-danger text-white mx-2" id="btnTerminarSubasta">Terminar Subasta</button>
+            </div>
         </div>
+    }
+
+    <div class="container d-flex justify-content-center mt-3">
+        <button class="btn btn-primary text-white mx-2" id="btnPujar" @(isSubastaActiva ? "" : "disabled")>Pujar</button>
+        <a asp-action="Index" class="btn btn-secondary text-white mx-2">Regresar</a>
     </div>
 
     <div class="container mt-2">
@@ -77,9 +86,9 @@
                 </div>
                 <div class="mt-1">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje...">
+                        <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje..." @(!isSubastaActiva ? "disabled" : "")>
                         <div class="input-group-append">
-                            <button class="btn btn-primary btn-send-message" type="button">Enviar</button>
+                            <button class="btn btn-primary btn-send-message" type="button" @(!isSubastaActiva ? "disabled" : "")>Enviar</button>
                         </div>
                     </div>
                 </div>
@@ -119,71 +128,115 @@
     <script>
         let currentUser = "@User.Identity.Name";
         let currentSubastaId = "@Model.IdSubasta";
+        let isSubastaActiva = @(isSubastaActiva ? "true" : "false");
 
         document.getElementById("btnPujar").addEventListener("click", function () {
-            Swal.fire({
-                title: 'Ingrese su puja',
-                input: 'number',
-                inputAttributes: {
-                    min: parseFloat(document.getElementById("current-amount").innerText.replace('$', '')) + 1,
-                    step: 1
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Pujar',
-                showLoaderOnConfirm: true,
-                preConfirm: (amount) => {
-                    return fetch('/Pujas/Create', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                        },
-                        body: JSON.stringify({
-                            IdSubasta: @Model.IdSubasta,
-                            MontoPuja: amount,
-                            IdUsuario: @User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                                })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(response.statusText);
-                            }
-                            return response.json();
+            if (isSubastaActiva) {
+                Swal.fire({
+                    title: 'Ingrese su puja',
+                    input: 'number',
+                    inputAttributes: {
+                        min: parseFloat(document.getElementById("current-amount").innerText.replace('$', '')) + 1,
+                        step: 1
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Pujar',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (amount) => {
+                        return fetch('/Pujas/Create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            },
+                            body: JSON.stringify({
+                                IdSubasta: @Model.IdSubasta,
+                                MontoPuja: amount,
+                                IdUsuario: @User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                                    })
                         })
-                        .catch(error => {
-                            Swal.showValidationMessage(
-                                `Request failed: ${error}`
-                            );
-                        });
-                },
-                allowOutsideClick: () => !Swal.isLoading()
-            }).then((result) => {
-                if (result.isConfirmed) {
-
-                    if (result.value != undefined && result.value.success) {
-
-                        connection.invoke("SendBid", currentUser, result.value.montoPuja, currentSubastaId).catch(function (err) {
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(response.statusText);
+                                }
+                                return response.json();
+                            })
+                            .catch(error => {
+                                Swal.showValidationMessage(
+                                    `Request failed: ${error}`
+                                );
+                            });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (result.value != undefined && result.value.success) {
+                            connection.invoke("SendBid", currentUser, result.value.montoPuja, currentSubastaId).catch(function (err) {
                                 return console.error(err.toString());
                             });
 
-                        Swal.fire({
-                            title: 'Puja exitosa!',
-                            text: `Su puja de $${result.value.montoPuja} fue aceptada.`,
-                            icon: 'success'
-                        }).then(() => {
-                            event.preventDefault();
-                        });
+                            Swal.fire({
+                                title: 'Puja exitosa!',
+                                text: `Su puja de $${result.value.montoPuja} fue aceptada.`,
+                                icon: 'success'
+                            }).then(() => {
+                                event.preventDefault();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error en la puja',
+                                text: `Ups... ${result.value.message}`,
+                                icon: 'error'
+                            });
+                        }
                     }
-                    else {
-                        Swal.fire({
-                            title: 'Puja exitosa!',
-                            text: `Ups... ${result.value.message}`,
-                            icon: 'error'
-                        });
-                    }
-                }
-            });
+                });
+            }
         });
+
+        let btnTerminar = document.getElementById("btnTerminarSubasta");
+
+        if(btnTerminar != undefined){
+            btnTerminar.addEventListener("click", function () {
+                Swal.fire({
+                    title: '¿Está seguro de que quiere terminar la subasta?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, terminar',
+                    cancelButtonText: 'No, cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/Subasta/TerminarSubasta?idSubasta=' + currentSubastaId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(response.statusText);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                Swal.fire(
+                                    'Subasta terminada',
+                                    `La subasta ha sido terminada por el administrador.`,
+                                    'success'
+                                );
+                            })
+                            .catch(error => {
+                                Swal.fire(
+                                    'Error',
+                                    `Hubo un problema al terminar la subasta: ${error}`,
+                                    'error'
+                                );
+                            });
+                    }
+                });
+            });
+        }
     </script>
 
     <script src="~/js/SubastaHub.js" asp-append-version="true"></script>

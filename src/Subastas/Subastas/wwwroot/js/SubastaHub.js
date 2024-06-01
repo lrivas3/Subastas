@@ -36,6 +36,19 @@ connection.on("UpdateParticipants", function (participants) {
     });
 });
 
+connection.on("ReceiveSubastaTerminada", function (administrador, ganador) {
+    Swal.fire({
+        title: `El administrador ${administrador} ha terminado la subasta`,
+        text: `El ganador de la subasta es ${ganador}`,
+        icon: 'info',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        confirmButtonText: 'Aceptar'
+    }).then(() => {
+        location.reload();
+    });
+});
+
 connection.start().then(() => {
     connection.invoke("UpdateParticipants", currentUser, true, currentSubastaId).catch(function (err) {
         return console.error(err.toString());
@@ -57,12 +70,14 @@ document.querySelector("#chat-input").addEventListener("keydown", function (even
 });
 
 function sendMessage() {
-    const message = document.querySelector("#chat-input").value;
-    const user = currentUser;
-    connection.invoke("SendMessage", user, message, currentSubastaId).catch(function (err) {
-        return console.error(err.toString());
-    });
-    document.querySelector("#chat-input").value = "";
+    if (isSubastaActiva) {
+        const message = document.querySelector("#chat-input").value;
+        const user = currentUser;
+        connection.invoke("SendMessage", user, message, currentSubastaId).catch(function (err) {
+            return console.error(err.toString());
+        });
+        document.querySelector("#chat-input").value = "";
+    }
 }
 
 
