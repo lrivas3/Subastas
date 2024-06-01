@@ -8,7 +8,6 @@ public partial class SubastasContext : DbContext
     public SubastasContext()
     {
     }
-
     public SubastasContext(DbContextOptions<SubastasContext> options)
         : base(options)
     {
@@ -37,6 +36,8 @@ public partial class SubastasContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     public virtual DbSet<UsuarioRol> UsuarioRols { get; set; }
+    
+    public virtual DbSet<LogEntry> LogEntries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {        
@@ -305,6 +306,9 @@ public partial class SubastasContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_usuario_rol_usuarios");
         });
+        modelBuilder.Entity<LogEntry>()
+            .Property(e => e.Id)
+            .ValueGeneratedOnAdd();
 
         OnModelCreatingPartial(modelBuilder);
     }

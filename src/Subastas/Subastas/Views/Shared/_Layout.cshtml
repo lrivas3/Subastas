@@ -61,6 +61,17 @@
                                 </ul>
                             </li>
                         }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="usuarioDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Logs
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="usuarioDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="LogEntries" asp-action="Index">Listar</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity.IsAuthenticated)

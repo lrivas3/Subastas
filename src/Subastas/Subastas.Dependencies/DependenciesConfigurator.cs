@@ -40,7 +40,7 @@ namespace Subastas.Dependencies
             services.AddScoped<ICuentaService, CuentaService>();
             services.AddScoped<IUsuarioRolRepository, UsuarioRolRepository>();
             services.AddScoped<IUsuarioRolService, UsuarioRolService>();
-
+            services.AddScoped<ILogEntryRepository, LogEntryRepository>();
             return services;
         }
     }

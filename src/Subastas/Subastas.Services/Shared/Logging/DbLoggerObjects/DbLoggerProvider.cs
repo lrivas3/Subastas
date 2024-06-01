@@ -1,17 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Subastas.Services.Shared.Logging.DbLoggerObjects.RoundTheCode.LoggerDb.Shared.Logging.DbLoggerObjects;
+using Subastas.Interfaces.Repositories;
 
 namespace Subastas.Services.Shared.Logging.DbLoggerObjects
 {
     [ProviderAlias("Database")]
     public class DbLoggerProvider : ILoggerProvider
     {
-        public readonly DbLoggerOptions Options;
+        public readonly IServiceProvider _ServiceProvider;
 
-        public DbLoggerProvider(IOptions<DbLoggerOptions> _options)
+        public DbLoggerProvider(IServiceProvider serviceProvider)
         {
-            Options = _options.Value; // Stores all the options.
+            _ServiceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Subastas.Services.Shared.Logging.DbLoggerObjects
         /// <returns></returns>
         public ILogger CreateLogger(string categoryName)
         {
-            return new DbLogger(this);
+            return new DbLogger(_ServiceProvider);
         }
 
         public void Dispose()
