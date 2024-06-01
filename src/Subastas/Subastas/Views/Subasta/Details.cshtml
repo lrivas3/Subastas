@@ -21,12 +21,20 @@
                             <div class="card-body">
                                 <h5 class="card-title">@Model.TituloSubasta</h5>
                                 <dl class="row">
-                                    <dt class="col-sm-3">#:</dt>
-                                    <dd class="col-sm-9">@Model.IdSubasta</dd>
+                                    @if (isAdmin)
+                                    {
+                                        <dt class="col-sm-3">#:</dt>
+                                        <dd class="col-sm-9">@Model.IdSubasta</dd>
+                                    }
                                     <dt class="col-sm-3">Monto actual:</dt>
                                     <dd class="col-sm-9" id="current-amount">$@Model.MontoInicial</dd>
                                     <dt class="col-sm-3">Estado:</dt>
                                     <dd class="col-sm-9">@(Model.EstaActivo ? "En Curso" : "Finalizada")</dd>
+                                    @if(Model.IdUsuario > 0 && Model.IdUsuarioNavigation != null)
+                                    {
+                                        <dt class="col-sm-3">Ganador:</dt>
+                                        <dd class="col-sm-9">@Model?.IdUsuarioNavigation?.NombreUsuario @Model?.IdUsuarioNavigation?.ApellidoUsuario</dd>
+                                    }
                                 </dl>
                             </div>
                         </div>
@@ -220,11 +228,16 @@
                                 return response.json();
                             })
                             .then(data => {
-                                Swal.fire(
-                                    'Subasta terminada',
-                                    `La subasta ha sido terminada por el administrador.`,
-                                    'success'
-                                );
+                                Swal.fire({
+                                    title: 'Subasta terminada',
+                                    text: 'La subasta ha sido terminada por el administrador.',
+                                    icon: 'success',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false,
+                                    confirmButtonText: 'Aceptar'
+                                }).then(() => {
+                                    location.reload();
+                                });
                             })
                             .catch(error => {
                                 Swal.fire(

@@ -64,6 +64,7 @@ namespace Subastas.Controllers
                 if (ModelState.IsValid)
                 {
                     await subastaService.CreateAsync(subasta);
+                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -127,6 +128,7 @@ namespace Subastas.Controllers
                 try
                 {
                     await subastaService.UpdateAsync(subasta);
+                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -172,6 +174,7 @@ namespace Subastas.Controllers
                         await userService.UpdateAsync(usuario);
                     }
 
+                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     result = new { success = true, errorMessage = "" };
                 }
                 else

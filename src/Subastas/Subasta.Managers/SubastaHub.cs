@@ -19,6 +19,11 @@ namespace Subasta.Managers
             await Clients.Group(subastaId).SendAsync("ReceiveMessage", user, message);
         }
 
+        public async Task NotifySubastaUpdated()
+        {
+            await Clients.All.SendAsync("ReceiveSubastaUpdate");
+        }
+
         public async Task UpdateParticipants(string user, bool joined, string subastaId)
         {
             var connectionId = Context.ConnectionId;
