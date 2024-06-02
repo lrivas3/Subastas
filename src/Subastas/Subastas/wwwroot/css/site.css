@@ -29,9 +29,8 @@ body {
 .container-md,
 .container-sm {
     width: 100%;
-    max-width: calc(100% - 100px); /* Calcula el ancho menos el padding total */
-    margin-right: auto; /* Centra horizontalmente */
-    margin-left: auto; /* Centra horizontalmente */
+    margin-right: auto;
+    margin-left: auto;
 }
 
 
