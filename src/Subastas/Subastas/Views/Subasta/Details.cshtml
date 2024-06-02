@@ -2,6 +2,7 @@
 @model Subastas.Domain.Subasta
 
 @{
+    ViewData["Title"] = !string.IsNullOrEmpty(Model.TituloSubasta) ? Model.TituloSubasta : "Subasta";
     bool isAdmin = User.IsInRole("Admin");
     bool isSubastaActiva = Model.EstaActivo;
 }

@@ -6,18 +6,22 @@
 
 <link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
 
-<h1>Subastas</h1>
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
-
-    @if (Model == null || !Model.Any())
-    {
-        <div class="col">
-            <h1>Parece que no hay Subastas!</h1>
-        </div>
-    }
-    else
-    {
+@if (Model != null && Model.Any())
+{
+    <h1>Subastas</h1>
+}
+@if (Model == null || !Model.Any())
+{
+    <div class="row mt-5 text-center">
+        <h1>Parece que no hay subastas!</h1>
+    </div>
+    <div class="row mt-5 d-flex justify-content-center">
+        <img style="max-width:550px" src="https://static.vecteezy.com/system/resources/previews/004/968/590/original/no-result-data-not-found-concept-illustration-flat-design-eps10-simple-and-modern-graphic-element-for-landing-page-empty-state-ui-infographic-etc-vector.jpg" />
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var item in Model)
         {
             <div class="col">
@@ -41,8 +45,10 @@
                 </div>
             </div>
         }
-    }
-</div>
+    </div>
+}
+
+
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
