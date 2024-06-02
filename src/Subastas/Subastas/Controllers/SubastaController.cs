@@ -6,16 +6,36 @@ using Subasta.Managers;
 using Subastas.Interfaces;
 using Subastas.Interfaces.Services;
 using System.Data.Common;
+using Microsoft.AspNetCore.Http;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using Newtonsoft.Json;
+using static Amazon.Runtime.Internal.Settings.SettingsCollection;
+using System.Drawing.Printing;
+using System.Text;
+using Subastas.Services;
+using Subastas.Domain;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Subastas.Controllers
 {
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public class SubastaController(
-        IProductoService productoService, 
-        ISubastaService subastaService,
-        IUserService userService,
-        IHubContext<SubastaHub> hubContext) : Controller
+    public class SubastaController : Controller
     {
+        private readonly IProductoService _productoService;
+        private readonly ISubastaService _subastaService;
+        private readonly IUserService _userService;
+
+        public SubastaController(
+            IProductoService productoService,
+            ISubastaService subastaService,
+            IUserService userService)
+        {
+            _productoService = productoService;
+            _subastaService = subastaService;
+            _userService = userService;
+        }
+
         public async Task<IActionResult> Index()
         {
             try
@@ -24,14 +44,14 @@ namespace Subastas.Controllers
 
                 if (User.IsInRole("Admin"))
                 {
-                    listaSubasta = await subastaService.GetAllAsync();
+                    listaSubasta = await _subastaService.GetAllAsync();
                 }
                 else
                 {
-                    listaSubasta = await subastaService.GetAllByPredicateAsync(s => s.EstaActivo);
+                    listaSubasta = await _subastaService.GetAllByPredicateAsync(s => s.EstaActivo);
                 }
 
-                listaSubasta = await subastaService.SetToListProductoWithImgPreloaded(listaSubasta.ToList());
+                listaSubasta = await _subastaService.SetToListProductoWithImgPreloaded(listaSubasta.ToList());
                 return View(listaSubasta);
             }
             catch (DbException ex)
@@ -50,7 +70,7 @@ namespace Subastas.Controllers
         [Authorize(AuthenticationSchemes = "Bearer", Roles ="Admin")]
         public async Task<IActionResult> Create()
         {
-            ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && p.Subasta.IdProducto != p.IdProducto), "IdProducto", "NombreProducto");
+            ViewData["IdProducto"] = new SelectList(await _productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && p.Subasta.IdProducto != p.IdProducto), "IdProducto", "NombreProducto");
             return View(new Domain.Subasta());
         }
 
@@ -63,12 +83,11 @@ namespace Subastas.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await subastaService.CreateAsync(subasta);
-                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
+                    await _subastaService.CreateAsync(subasta);
                     return RedirectToAction(nameof(Index));
                 }
 
-                ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && p.Subasta.IdProducto != p.IdProducto), "IdProducto", "NombreProducto");
+                ViewData["IdProducto"] = new SelectList(await _productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && p.Subasta.IdProducto != p.IdProducto), "IdProducto", "NombreProducto");
             }
             catch (Exception ex)
             {
@@ -84,13 +103,23 @@ namespace Subastas.Controllers
             var subasta = new Domain.Subasta();
             try
             {
-                subasta = await subastaService.GetSubastaWithPujaAndUsers(id) ?? subasta;
-                subasta = await subastaService.SetProductoWithImgPreloaded(subasta);
+                subasta = await _subastaService.GetSubastaWithPujaAndUsers(id) ?? subasta;
+                subasta = await _subastaService.SetProductoWithImgPreloaded(subasta);
 
                 if (subasta != null)
                 {
-                    decimal priceNow = subasta.MontoInicial;
-                    subasta.MontoInicial = subasta.Pujas.Max(s => s.MontoPuja);
+                    decimal? maxMontoPuja = subasta.Pujas.Any() ? (decimal?)subasta.Pujas.Max(s => s.MontoPuja) : null;
+                    ViewBag.MaxMontoPuja = maxMontoPuja;
+
+                    if (maxMontoPuja.HasValue)
+                    {
+                        // Obtener el IdUsuario correspondiente al monto de puja más alto
+                        int idUsuarioMaxPuja = subasta.Pujas.First(p => p.MontoPuja == maxMontoPuja).IdUsuario;
+
+                        // Obtener el nombre del usuario con el IdUsuario encontrado
+                        var usuarioConMaxPuja = await _userService.GetByIdAsync(idUsuarioMaxPuja);
+                        ViewBag.NombreUsuarioMaxPuja = usuarioConMaxPuja.NombreUsuario;
+                    }
                 }
                 return View(subasta);
             }
@@ -100,16 +129,17 @@ namespace Subastas.Controllers
             }
         }
 
+
         [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
-            var subasta = await subastaService.GetByIdAsync(id);
+            var subasta = await _subastaService.GetByIdAsync(id);
             if (subasta == null)
             {
                  return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && (p.Subasta.IdProducto != p.IdProducto || p.Subasta.IdSubasta == id)), "IdProducto", "NombreProducto", subasta.IdProducto);
+            ViewData["IdProducto"] = new SelectList(await _productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && (p.Subasta.IdProducto != p.IdProducto || p.Subasta.IdSubasta == id)), "IdProducto", "NombreProducto", subasta.IdProducto);
             return View("Create", subasta);
         }
 
@@ -127,8 +157,7 @@ namespace Subastas.Controllers
             {
                 try
                 {
-                    await subastaService.UpdateAsync(subasta);
-                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
+                    await _subastaService.UpdateAsync(subasta);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -137,7 +166,7 @@ namespace Subastas.Controllers
                 }
             }
 
-            ViewData["IdProducto"] = new SelectList(await productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && (p.Subasta.IdProducto != p.IdProducto || p.Subasta.IdSubasta == id)), "IdProducto", "NombreProducto", subasta.IdProducto);
+            ViewData["IdProducto"] = new SelectList(await _productoService.GetAllByPredicateAsync(p => !p.EstaSubastado && p.EstaActivo && (p.Subasta.IdProducto != p.IdProducto || p.Subasta.IdSubasta == id)), "IdProducto", "NombreProducto", subasta.IdProducto);
             return View("Create", subasta);
         }
 
@@ -150,7 +179,7 @@ namespace Subastas.Controllers
 
             try
             {
-                var subasta = await subastaService.GetSubastaWithPujaAndUsers(id);
+                var subasta = await _subastaService.GetSubastaWithPujaAndUsers(id);
 
                 var usersPujas = subasta.Pujas
                     .GroupBy(p => p.IdUsuario)
@@ -161,17 +190,17 @@ namespace Subastas.Controllers
                     })
                     .ToList();
 
-                var deleted = await subastaService.DeleteById(id);
+                var deleted = await _subastaService.DeleteById(id);
 
                 if (deleted)
                 {
                     foreach (var user in usersPujas)
                     {
-                        var usuario = await userService.GetUserWithCuentum(user.UserId);
+                        var usuario = await _userService.GetUserWithCuentum(user.UserId);
 
                         usuario.Cuentum.Saldo += user.SumaDePujas;
 
-                        await userService.UpdateAsync(usuario);
+                        await _userService.UpdateAsync(usuario);
                     }
 
                     await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
@@ -190,40 +219,105 @@ namespace Subastas.Controllers
             return Json(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> TerminarSubasta(int idSubasta)
+        public async Task<IActionResult> Export(string format)
         {
+            List<SubastaExportModel> subastas;
+
             try
             {
-                var subasta = await subastaService.GetSubastaWithPujaAndUsers(idSubasta);
-
-                if (subasta == null)
-                {
-                    return NotFound();
-                }
-
-                subasta.EstaActivo = false;
-                var ganador = subasta.Pujas.OrderByDescending(p => p.MontoPuja).FirstOrDefault()?.IdUsuarioNavigation;
-
-                if (ganador == null)
-                {
-                    return NotFound();
-                }
-
-                subasta.IdUsuario = ganador.IdUsuario;
-
-                await subastaService.UpdateAsync(subasta);
-
-                string administrador = User.Identity.Name;
-
-                await hubContext.Clients.Group(subasta.IdSubasta.ToString()).SendAsync("ReceiveSubastaTerminada", administrador, ganador.NombreUsuario);
-
-                return Ok(new {success = true});
+                subastas = (await _subastaService.GetAllAsync())
+                                .Where(s => s.EstaActivo)
+                                .Select(s => new SubastaExportModel
+                                {
+                                    TituloSubasta = s.TituloSubasta,
+                                    MontoInicial = s.MontoInicial.ToString(),
+                                    FechaInicio = s.FechaSubasta.ToString(),
+                                    FechaFin = s.FechaSubastaFin.ToString(),
+                                    Activo = s.EstaActivo ? "Sí" : "No",
+                                    Producto = s.IdProducto.ToString(),
+                                })
+                                .ToList();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return NotFound();
+                Console.WriteLine($"Error al obtener las subastas: {ex.Message}");
+                return StatusCode(500, "Error al obtener las subastas");
             }
+
+            if (subastas == null || !subastas.Any())
+            {
+                return NotFound("No hay subastas para exportar.");
+            }
+
+            if (format == "xlsx")
+            {
+                byte[] fileContents;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        var worksheet = workbook.Worksheets.Add("Subastas");
+                        worksheet.Cell(1, 1).Value = "TituloSubasta";
+                        worksheet.Cell(1, 2).Value = "MontoInicial";
+                        worksheet.Cell(1, 3).Value = "FechaInicio";
+                        worksheet.Cell(1, 4).Value = "FechaFin";
+                        worksheet.Cell(1, 5).Value = "Activo";
+                        worksheet.Cell(1, 6).Value = "Producto";
+
+                        int row = 2;
+                        foreach (var subasta in subastas)
+                        {
+                            worksheet.Cell(row, 1).Value = subasta.TituloSubasta;
+                            worksheet.Cell(row, 2).Value = subasta.MontoInicial;
+                            worksheet.Cell(row, 3).Value = subasta.FechaInicio;
+                            worksheet.Cell(row, 4).Value = subasta.FechaFin;
+                            worksheet.Cell(row, 5).Value = subasta.Activo;
+                            worksheet.Cell(row, 6).Value = subasta.Producto;
+                            row++;
+                        }
+
+                        using (var stream = new MemoryStream())
+                        {
+                            workbook.SaveAs(stream);
+                            fileContents = stream.ToArray();
+                        }
+                    }
+
+                    return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "subastas.xlsx");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al generar el archivo Excel: {ex.Message}");
+                    return StatusCode(500, "Error al generar el archivo Excel");
+                }
+            }
+            else if (format == "json")
+            {
+                try
+                {
+                    var json = JsonConvert.SerializeObject(subastas, Newtonsoft.Json.Formatting.Indented);
+                    var jsonBytes = Encoding.UTF8.GetBytes(json);
+
+                    return File(jsonBytes, "application/json", "subastas.json");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al generar el archivo JSON: {ex.Message}");
+                    return StatusCode(500, "Error al generar el archivo JSON");
+                }
+            }
+
+            return NotFound();
+        }
+
+        public class SubastaExportModel
+        {
+            public string TituloSubasta { get; set; }
+            public string MontoInicial { get; set; }
+            public string FechaInicio { get; set; }
+            public string FechaFin { get; set; }
+            public string Activo { get; set; }
+            public string Producto { get; set; }
         }
     }
 }

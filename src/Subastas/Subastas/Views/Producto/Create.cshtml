@@ -4,44 +4,45 @@
     ViewData["Title"] = "Crear Producto";
 }
 
-<h1>Crear Producto</h1>
-
-<h4>Producto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div class="form-group">
-                <label asp-for="NombreProducto" class="control-label"></label>
-                <input asp-for="NombreProducto" class="form-control" />
-                <span asp-validation-for="NombreProducto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DescripcionProducto" class="control-label"></label>
-                <textarea asp-for="DescripcionProducto" class="form-control"></textarea>
-                <span asp-validation-for="DescripcionProducto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label for="imagen" class="control-label">Imagen Producto</label>
-                <input type="file" class="form-control" id="imagen" name="imagen" required />
-                <span class="text-danger" data-valmsg-for="imagen" data-valmsg-replace="true"></span>
-            </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input asp-for="EstaActivo" class="form-check-input" />
-                    <label asp-for="EstaActivo" class="form-check-label"></label>
-                </div>
-                <span asp-validation-for="EstaActivo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="create">
+    <div class="justify-content-left btn-return">
+        <img src="/assets/img/icons/returnIcon.png" alt="Regresar" height="40px">
+        <a asp-action="Index">Regresar</a>
     </div>
-</div>
+    <br/>
+    <h1>Crear Producto</h1>
 
-<div>
-    <a asp-action="Index">Volver a la lista</a>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label asp-for="NombreProducto" class="control-label"></label>
+                    <input asp-for="NombreProducto" class="form-control" />
+                    <span asp-validation-for="NombreProducto" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DescripcionProducto" class="control-label"></label>
+                    <textarea asp-for="DescripcionProducto" class="form-control"></textarea>
+                    <span asp-validation-for="DescripcionProducto" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label for="imagen" class="control-label">Imagen Producto</label>
+                    <input type="file" class="form-control" id="imagen" name="imagen" required />
+                    <span class="text-danger" data-valmsg-for="imagen" data-valmsg-replace="true"></span>
+                </div>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input asp-for="EstaActivo" class="form-check-input" />
+                        <label asp-for="EstaActivo" class="form-check-label"></label>
+                    </div>
+                    <span asp-validation-for="EstaActivo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Crear" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

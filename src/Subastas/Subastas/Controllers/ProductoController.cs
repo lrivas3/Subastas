@@ -5,6 +5,12 @@ using Subastas.Dto.Producto;
 using Subastas.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Subastas.Interfaces.Services;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using Newtonsoft.Json;
+using static Amazon.Runtime.Internal.Settings.SettingsCollection;
+using System.Drawing.Printing;
+using System.Text;
 
 namespace Subastas.Controllers
 {
@@ -164,5 +170,99 @@ namespace Subastas.Controllers
                 return View(productoToReturn);
             }
         }
+
+        public async Task<IActionResult> Export(string format)
+        {
+            List<ProductoExportModel> productos;
+
+            try
+            {
+                productos = (await _productoService.GetAllAsync())
+                                .Where(p => p.EstaActivo)
+                                .Select(p => new ProductoExportModel
+                                {
+                                    Nombre = p.NombreProducto,
+                                    Descripcion = p.DescripcionProducto,
+                                    Activo = p.EstaActivo ? "Sí" : "No",
+                                    Subastado = p.EstaSubastado ? "Sí" : "No"
+                                })
+                                .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener los productos: {ex.Message}");
+                return StatusCode(500, "Error al obtener los productos");
+            }
+
+            if (productos == null || !productos.Any())
+            {
+                return NotFound("No hay productos para exportar.");
+            }
+
+            if (format == "xlsx")
+            {
+                byte[] fileContents;
+                try
+                {
+                    using (var workbook = new XLWorkbook())
+                    {
+                        var worksheet = workbook.Worksheets.Add("Productos");
+                        worksheet.Cell(1, 1).Value = "Nombre";
+                        worksheet.Cell(1, 2).Value = "Descripción";
+                        worksheet.Cell(1, 3).Value = "Activo";
+                        worksheet.Cell(1, 4).Value = "Subastado";
+
+                        int row = 2;
+                        foreach (var producto in productos)
+                        {
+                            worksheet.Cell(row, 1).Value = producto.Nombre;
+                            worksheet.Cell(row, 2).Value = producto.Descripcion;
+                            worksheet.Cell(row, 3).Value = producto.Activo;
+                            worksheet.Cell(row, 4).Value = producto.Subastado;
+                            row++;
+                        }
+
+                        using (var stream = new MemoryStream())
+                        {
+                            workbook.SaveAs(stream);
+                            fileContents = stream.ToArray();
+                        }
+                    }
+
+                    return File(fileContents, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "productos.xlsx");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al generar el archivo Excel: {ex.Message}");
+                    return StatusCode(500, "Error al generar el archivo Excel");
+                }
+            }
+            else if (format == "json")
+            {
+                try
+                {
+                    var json = JsonConvert.SerializeObject(productos, Newtonsoft.Json.Formatting.Indented);
+                    var jsonBytes = Encoding.UTF8.GetBytes(json);
+
+                    return File(jsonBytes, "application/json", "productos.json");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al generar el archivo JSON: {ex.Message}");
+                    return StatusCode(500, "Error al generar el archivo JSON");
+                }
+            }
+
+            return NotFound();
+        }
+
+        public class ProductoExportModel
+        {
+            public string Nombre { get; set; }
+            public string Descripcion { get; set; }
+            public string Activo { get; set; }
+            public string Subastado { get; set; }
+        }
+
     }
 }

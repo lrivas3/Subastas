@@ -2,26 +2,35 @@
 
 @{
     ViewData["Title"] = "Subastas";
+    bool isAdmin = User.IsInRole("Admin");
+}
+
+@if (isAdmin)
+{
+    <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Exportar reporte
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="#" onclick="exportTo('xlsx')"><img src="~/assets/img/icons/ExcelIcon.png" height="20px" style="margin-right: 10px;" />EXCEL</a></li>
+            <li><a class="dropdown-item" href="#" onclick="exportTo('json')"><img src="~/assets/img/icons/JSONIcon.png" height="20px" style="margin-right: 10px;" />JSON</a></li>
+        </ul>
+    </div>
+    <br />
 }
 
 <link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
 
-@if (Model != null && Model.Any())
-{
-    <h1>Subastas</h1>
-}
-@if (Model == null || !Model.Any())
-{
-    <div class="row mt-5 text-center">
-        <h1>Parece que no hay subastas!</h1>
-    </div>
-    <div class="row mt-5 d-flex justify-content-center">
-        <img style="max-width:550px" src="https://static.vecteezy.com/system/resources/previews/004/968/590/original/no-result-data-not-found-concept-illustration-flat-design-eps10-simple-and-modern-graphic-element-for-landing-page-empty-state-ui-infographic-etc-vector.jpg" />
-    </div>
-}
-else
-{
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="row row-cols-1 row-cols-md-5 g-4">
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="col">
+            <h1>¡Parece que no hay Subastas!</h1>
+        </div>
+    }
+    else
+    {
         @foreach (var item in Model)
         {
             <div class="col">
@@ -31,14 +40,18 @@ else
                              class="card-img-top img-fixed-size" alt="@item.TituloSubasta">
                         <div class="card-body">
                             <h5 class="card-title">@item.TituloSubasta</h5>
-                            <p class="card-text">Monto Inicial: @item.MontoInicial</p>
-                            <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
+                            <p class="card-text-monto">$@item.MontoInicial</p>
+                            <p class="card-text">Inicio: @item.FechaSubasta</p>
+                            <div class="@(item.EstaActivo ? "bg-active" : "bg-inactive") card-text">
+                                @(item.EstaActivo ? "Subasta activa" : "Subasta inactiva")
+                            </div>
                         </div>
+
                     </a>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <div class="card-footer text-center">
-                            <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-secondary text-white mx-2">Editar</a>
+                            <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-primary text-white mx-2">Editar</a>
                             <button class="btn btn-danger text-white mx-2" onclick="deleteSubasta(@item.IdSubasta)">Eliminar</button>
                         </div>
                     }
@@ -114,6 +127,47 @@ else
                     }
                 }
             });
+        }
+
+        async function exportTo(format) {
+            try {
+                var exportUrl = '@Url.Action("Export", "Subasta")' + '?format=' + format;
+
+                const response = await fetch(exportUrl);
+                if (!response.ok) {
+                    throw new Error('Explotó D:');
+                }
+
+                const blob = await response.blob();
+
+                // Obtener la fecha y hora actual
+                const dateTime = new Date();
+                const formattedDateTime = dateTime.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                }).replace(/:/g, '_').replace(/\s/g, ' ');
+
+                // Construir el nombre del archivo con la fecha y hora
+                const fileName = 'Subastas_export_' + formattedDateTime + '.' + format;
+
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName; // Usar el nuevo nombre del archivo
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+
+                console.log("Exportando a " + format);
+            } catch (error) {
+                console.error('Error exportando el archivo:', error);
+            }
         }
     </script>
 }
