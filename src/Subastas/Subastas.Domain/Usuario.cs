@@ -15,8 +15,8 @@ public partial class Usuario
     [Required(ErrorMessage = "El correo del usuario es obligatorio")]
     public string CorreoUsuario { get; set; } = null!;
     [Display(Name = "Contraseña del usuario")]
-    [Required(ErrorMessage = "La contraseña del usuario es obligatorio")]
-    public string Password { get; set; } = null!;
+    [StringLength(20, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre 6 y 20 caracteres.")]
+    public string? Password { get; set; } = null!;
     [Display(Name = "Estado del usuario")]
     public bool EstaActivo { get; set; } = true;
 
