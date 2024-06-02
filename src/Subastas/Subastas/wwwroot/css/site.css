@@ -84,13 +84,20 @@ body {
     padding: 0px 20px 0px 20px;
 }
 
-div > a, td > a {
-    color: #3995B2 !important;
-}
+/*div > a, td > a {
+    color: white !important;
+}*/
 
 .card {
     border-radius: 15px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-footer {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-bottom: 0px solid rgba(0, 0, 0, 0.125);
 }
 
 .card-footer:last-child {
@@ -103,9 +110,12 @@ div > a, td > a {
     color: white !important;
 }
 
-a {
+.navbar a {
+    color: white !important;
+}
+
+.navbar .dropdown-menu a {
     color: black !important;
-    text-decoration: underline;
 }
 
 .container .detalles-subastas {
@@ -195,6 +205,7 @@ a {
     text-decoration: none;
     font-weight: bold;
     font-size: 18px;
+    color: #3995B2 !important;
 }
 
 .icon-details {
@@ -205,6 +216,42 @@ a {
 .detail-subastas {
     color: #3C3C3C;
 }
+
+.nav-link:hover {
+    text-decoration: underline white;
+    color: white !important;
+    font-size: 16px;
+}
+
+.navbar .dropdown-item:active {
+    background-color: #3995b2 !important;
+}
+
+.dropdown-item:active {
+    background-color: #3995b2 !important;
+}
+
+.bg-white {
+    --bs-bg-opacity: 1;
+    background: linear-gradient(to right, #2534AD, #3995B2) !important;
+}
+
+.create {
+    background-color: white !important;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.mx-2 {
+    margin: 5px !important;
+}
+
+
+
 
 /* Estilo para el contenedor del chat */
 .chat-container {
@@ -289,7 +336,7 @@ a {
     cursor: pointer;
     padding: 5px;
     border-radius: 10px 10px 0px 0px;
-    width: 150px;
+    width: 250px;
     font-weight: bold;
 }
 
@@ -315,4 +362,6 @@ a {
     background-color: #003e52;
     border-color: white;
     border: 1px solid transparent;
-}C
+}
+
+

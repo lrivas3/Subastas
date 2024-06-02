@@ -7834,7 +7834,7 @@ textarea.form-control-lg {
 
 .bg-white {
     --bs-bg-opacity: 1;
-    background-color: #3995B2 !important;
+    background: linear-gradient(to right, #2534AD, #3995B2) !important;
 }
 
 .bg-body {

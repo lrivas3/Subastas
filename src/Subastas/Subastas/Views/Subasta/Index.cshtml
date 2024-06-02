@@ -2,6 +2,21 @@
 
 @{
     ViewData["Title"] = "Subastas";
+    bool isAdmin = User.IsInRole("Admin");
+}
+
+@if (isAdmin)
+{
+    <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Exportar reporte
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="#" onclick="exportTo('xlsx')"><img src="~/assets/img/icons/ExcelIcon.png" height="20px" style="margin-right: 10px;" />EXCEL</a></li>
+            <li><a class="dropdown-item" href="#" onclick="exportTo('json')"><img src="~/assets/img/icons/JSONIcon.png" height="20px" style="margin-right: 10px;" />JSON</a></li>
+        </ul>
+    </div>
+    <br />
 }
 
 <link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
@@ -36,7 +51,7 @@
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <div class="card-footer text-center">
-                            <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-secondary text-white mx-2">Editar</a>
+                            <a href="@Url.Action("Edit", new { id = item.IdSubasta })" class="btn btn-primary text-white mx-2">Editar</a>
                             <button class="btn btn-danger text-white mx-2" onclick="deleteSubasta(@item.IdSubasta)">Eliminar</button>
                         </div>
                     }
@@ -97,6 +112,47 @@
                     }
                 }
             });
+        }
+
+        async function exportTo(format) {
+            try {
+                var exportUrl = '@Url.Action("Export", "Subasta")' + '?format=' + format;
+
+                const response = await fetch(exportUrl);
+                if (!response.ok) {
+                    throw new Error('Explotó D:');
+                }
+
+                const blob = await response.blob();
+
+                // Obtener la fecha y hora actual
+                const dateTime = new Date();
+                const formattedDateTime = dateTime.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                }).replace(/:/g, '_').replace(/\s/g, ' ');
+
+                // Construir el nombre del archivo con la fecha y hora
+                const fileName = 'Subastas_export_' + formattedDateTime + '.' + format;
+
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName; // Usar el nuevo nombre del archivo
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+
+                console.log("Exportando a " + format);
+            } catch (error) {
+                console.error('Error exportando el archivo:', error);
+            }
         }
     </script>
 }
