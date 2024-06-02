@@ -1,5 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using Subastas.DAL;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Subasta.Managers;
+using Subastas.Dependencies;
+using Subastas.Services.Shared.Logging.DbLoggerObjects;
 
 namespace Subastas
 {
@@ -11,15 +13,31 @@ namespace Subastas
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.ConfigureServices(builder.Configuration);
             
-            builder.Services.AddDbContext<SubastasContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SubastasConnectionString")));
+            builder.Services.AddSignalR();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddCookie("Bearer", o =>
+                {
+                    o.LoginPath = "/Authentication/Login";
+                    o.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                    o.AccessDeniedPath = "/Authentication/Login";
+                });
+            // Configure DbLogger with connection string from the configuration
+            builder.Logging.AddDbLogger(options =>
+            {
+                options.ConnectionString = builder.Configuration.GetConnectionString("SubastasConnectionString");
+                builder.Configuration.GetSection("Logging:Database:Options").Bind(options);
+            });
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Authentication/Login");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -30,10 +48,13 @@ namespace Subastas
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Subasta}/{action=Index}/{id?}");
+
+            app.MapHub<SubastaHub>("/SubastaHub");
 
             app.Run();
         }

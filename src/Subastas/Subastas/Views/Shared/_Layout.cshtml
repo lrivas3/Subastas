@@ -1,31 +1,100 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Subastas</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Subastas.styles.css" asp-append-version="true" />
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- FontAwesome CSS -->
+    <link href="~/css/fontawesome/all.css" rel="stylesheet" />
+    <link href="~/css/fontawesome/all.min.css" rel="stylesheet" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Subastas</a>
+                <a class="navbar-brand text-primary" asp-area="" asp-controller="Subasta" asp-action="Index">
+                    <img src="~/assets/img/megasubastasLogo.png" height="50px"/>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="subastasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Subastas
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="subastasDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Subasta" asp-action="Index">Listar</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Subasta" asp-action="Create">Crear</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="productoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Producto
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="productoDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Producto" asp-action="Index">Listar</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Producto" asp-action="Create">Crear</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="usuarioDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Usuario
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="usuarioDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Usuario" asp-action="Index">Listar</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Usuario" asp-action="Create">Crear</a></li>
+                                </ul>
+                            </li>
+                        }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="usuarioDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Logs
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="usuarioDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="LogEntries" asp-action="Index">Listar</a></li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            if (!string.IsNullOrEmpty(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                            {
+                                <li class="nav-item d-flex align-items-center me-2">
+                                    <a class="nav-link" asp-controller="Usuario" asp-action="Details" asp-route-id="@User.FindFirstValue(ClaimTypes.NameIdentifier)">
+                                        @User.FindFirstValue(ClaimTypes.Name)
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <form asp-controller="Authentication" asp-action="Logout" method="post" class="form-inline">
+                                    <button type="submit" class="btn btn-outline-dark">Logout</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+
                 </div>
             </div>
         </nav>
@@ -38,12 +107,17 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Subastas - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Subastas - <a href="https://github.com/lrivas3/Subastas" target="_blank">Repo</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- FontAwesome JS -->
+    <script src="~/js/fontawesome/all.js"></script>
+    <script src="~/js/fontawesome/all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

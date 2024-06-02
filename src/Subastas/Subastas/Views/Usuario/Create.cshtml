@@ -1,0 +1,106 @@
+﻿@model Subastas.Dto.UsuarioCuentaViewModel
+
+@{
+    ViewData["Title"] = Model.Usuario.IdUsuario == 0 ? "Crear Usuario" : "Editar Usuario";
+
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<div class="create">
+    <div class="justify-content-left btn-return">
+        <img src="/assets/img/icons/returnIcon.png" alt="Regresar" height="40px">
+        <a asp-action="Index">Regresar</a>
+    </div>
+    <br/>
+    <h1>@(Model.Usuario.IdUsuario == 0 ? "Crear Usuario" : "Editar Usuario")</h1>
+    <div class="container">
+        <form asp-action="@(Model.Usuario.IdUsuario == 0 ? "Create" : "Edit")" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <br/>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Usuario.IdUsuario" />
+                    <div class="form-group mb-2">
+                        <label asp-for="Usuario.NombreUsuario" class="control-label"></label>
+                        <input asp-for="Usuario.NombreUsuario" class="form-control" />
+                        <span asp-validation-for="Usuario.NombreUsuario" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label asp-for="Usuario.ApellidoUsuario" class="control-label"></label>
+                        <input asp-for="Usuario.ApellidoUsuario" class="form-control" />
+                        <span asp-validation-for="Usuario.ApellidoUsuario" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label asp-for="Usuario.CorreoUsuario" class="control-label"></label>
+                        <input asp-for="Usuario.CorreoUsuario" class="form-control" />
+                        <span asp-validation-for="Usuario.CorreoUsuario" class="text-danger"></span>
+                    </div>  
+                    <div class="form-group mb-2">
+                        <label class="control-label">@(Model.Usuario.IdUsuario == 0 ? "Password" : "New Password")</label>
+                        <div class="input-group">
+                            <input asp-for="Usuario.Password" type="password" class="form-control"/>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility()">
+                                    <i class="fa fa-eye" id="togglePasswordIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <span asp-validation-for="Usuario.Password" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <h4>Cuenta</h4>
+                    <div class="form-group mb-2">
+                        <label asp-for="Cuenta.Saldo" class="control-label"></label>
+                        @if (isAdmin)
+                        {
+                            <input asp-for="Cuenta.Saldo" class="form-control" type="number" min="0" />
+                        }
+                        else
+                        {
+                            <input asp-for="Cuenta.Saldo" class="form-control" type="number" min="0" disabled/>
+                        }
+                        <span asp-validation-for="Cuenta.Saldo" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check mb-2">
+                        @if (isAdmin)
+                        {
+                            <input class="form-check-input" asp-for="Cuenta.EstaActivo" />
+                        }
+                        else
+                        {
+                            <input class="form-check-input" asp-for="Cuenta.EstaActivo" disabled />
+                        }
+                        <label class="form-check-label" asp-for="Cuenta.EstaActivo"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <input type="submit" value="@(Model.Usuario.IdUsuario == 0 ? "Crear" : "Guardar")" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('Usuario_Password');
+            var togglePasswordIcon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                togglePasswordIcon.classList.remove('fa-eye');
+                togglePasswordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                togglePasswordIcon.classList.remove('fa-eye-slash');
+                togglePasswordIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+}
