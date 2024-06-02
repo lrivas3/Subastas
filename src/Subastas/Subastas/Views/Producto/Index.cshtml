@@ -2,15 +2,30 @@
 
 @{
     ViewData["Title"] = "Productos";
+    bool isAdmin = User.IsInRole("Admin");
 }
 
-<h1>Productos</h1>
+@if (isAdmin)
+{
+    <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Exportar reporte
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="#" onclick="exportTo('xlsx')"><img src="~/assets/img/icons/ExcelIcon.png" height="20px" style="margin-right: 10px;"/>EXCEL</a></li>
+            <li><a class="dropdown-item" href="#" onclick="exportTo('json')"><img src="~/assets/img/icons/JSONIcon.png" height="20px" style="margin-right: 10px;" />JSON</a></li>
+        </ul>
+    </div>
+    <br />
+}
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<link rel="stylesheet" href="~/css/SubastasIndex.css" asp-append-version="true" />
+
+<div class="row row-cols-1 row-cols-md-5 g-4">
     @if (Model == null || !Model.Any())
     {
         <div class="col">
-            <h1>Parece que no hay Productos!</h1>
+            <h1>¡Parece que no hay Productos!</h1>
         </div>
     }
     else
@@ -18,23 +33,27 @@
         @foreach (var item in Model)
         {
             <div class="col">
-                <div class="card">
-                    <img src="@(!string.IsNullOrEmpty(item.ImagenProducto) ? item.ImagenProducto : "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")"
-                         class="card-img-top img-fixed-size" alt="@item.NombreProducto">
-                    <div class="card-body">
-                        <h5 class="card-title">@item.NombreProducto</h5>
-                        <p class="card-text">@item.DescripcionProducto</p>
-                        <p class="card-text">Activo: @(item.EstaActivo ? "Sí" : "No")</p>
-                        <p class="card-text">Subastado: @(item.EstaSubastado ? "Sí" : "No")</p>
-                    </div>
+                <div class="card h-100">
+                    <a href="@Url.Action("Details", new { id = item.IdProducto })" class="text-decoration-none text-dark">
+                        <img src="@(!string.IsNullOrEmpty(item.ImagenProducto) ? item.ImagenProducto : "https://www.cruiseloloma.co.nz/wp-content/uploads/2014/12/placeholder-400x300.jpg")"
+                             class="card-img-top img-fixed-size" alt="@item.NombreProducto">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.NombreProducto</h5>
+                            <p class="card-text">@item.DescripcionProducto</p>
+                            <div class="@(item.EstaActivo ? "bg-active" : "bg-inactive") card-text">
+                                Activo: @(item.EstaActivo ? "Sí" : "No")
+                            </div>
+                            <div class="@(item.EstaSubastado ? "bg-active" : "bg-inactive") card-text">
+                                Subastado: @(item.EstaSubastado ? "Sí" : "No")
+                            </div>
+                        </div>
+                    </a>
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <div class="card-footer text-center">
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-primary">Details</a>
-                                <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-secondary">Edit</a>
-                                <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger">Delete</a>
-                            </div>
+                            <a href="@Url.Action("Details", new { id = item.IdProducto })" class="btn btn-secondary text-white mx-2">Detalles</a>
+                            <a href="@Url.Action("Edit", new { id = item.IdProducto })" class="btn btn-primary text-white mx-2">Editar</a>
+                            <a href="@Url.Action("Delete", new { id = item.IdProducto })" class="btn btn-danger text-white mx-2">Eliminar</a>
                         </div>
                     }
                 </div>
@@ -42,3 +61,48 @@
         }
     }
 </div>
+
+@section Scripts {
+    <script>
+        async function exportTo(format) {
+            try {
+                var exportUrl = '@Url.Action("Export", "Producto")' + '?format=' + format;
+
+                const response = await fetch(exportUrl);
+                if (!response.ok) {
+                    throw new Error('Explotó D:');
+                }
+
+                const blob = await response.blob();
+
+                // Obtener la fecha y hora actual
+                const dateTime = new Date();
+                const formattedDateTime = dateTime.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                }).replace(/:/g, '_').replace(/\s/g, ' ');
+
+                // Construir el nombre del archivo con la fecha y hora
+                const fileName = 'Productos_export_' + formattedDateTime + '.' + format;
+
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = fileName; // Usar el nuevo nombre del archivo
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+
+                console.log("Exportando a " + format);
+            } catch (error) {
+                console.error('Error exportando el archivo:', error);
+            }
+        }
+    </script>
+}

@@ -7,11 +7,15 @@
     bool isSubastaActiva = Model.EstaActivo;
 }
 
-<div class="container mt-2">
+<div class="container detalles-subastas mt-2">
+    <div class="row pt-3 mt-3">
+        <div class="container d-flex justify-content-left btn-return">
+            <img src="/assets/img/icons/returnIcon.png" alt="Regresar" height="40px">
+            <a asp-action="Index">Regresar</a>
+        </div>
+    </div>
     <div class="row">
-        <div class="col-md-6 mt-3">
-            <h4>Detalles de la Subasta</h4>
-            <hr />
+        <div class="col-md-8 mt-3">
             <div class="container mt-4">
                 <div class="card">
                     <div class="row no-gutters">
@@ -21,6 +25,7 @@
                         <div class="col-md-12">
                             <div class="card-body">
                                 <h5 class="card-title">@Model.TituloSubasta</h5>
+                                <br />
                                 <dl class="row">
                                     @if (isAdmin)
                                     {
@@ -36,6 +41,20 @@
                                         <dt class="col-sm-3">Ganador:</dt>
                                         <dd class="col-sm-9">@Model?.IdUsuarioNavigation?.NombreUsuario @Model?.IdUsuarioNavigation?.ApellidoUsuario</dd>
                                     }
+                                    <dt class="col-sm-12">Información de la subasta</dt>
+                                    <br /><br />
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/inicioSubasta.png" class="icon-details">Fecha de inicio:</dt>
+                                    <dd class="col-sm-8 detail-subastas">@Model.FechaSubasta.ToString("dd/M/yyyy, H:mm:ss")</dd>
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/finSubasta.png" class="icon-details">Fecha de fin:</dt>
+                                    <dd class="col-sm-8 detail-subastas">@Model.FechaSubastaFin.ToString("dd/M/yyyy, H:mm:ss")</dd>
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/idSubasta.png" class="icon-details">ID Subasta:</dt>
+                                    <dd class="col-sm-8 detail-subastas">@Model.IdSubasta</dd>
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/montoSubasta.png" class="icon-details">Monto Inicial:</dt>
+                                    <dd class="col-sm-8 detail-subastas">$@Model.MontoInicial</dd>
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/montoActualSubasta.png" class="icon-details">Monto Actual:</dt>
+                                    <dd class="col-sm-8 detail-subastas" id="current-amount">$@(ViewBag.MaxMontoPuja ?? Model.MontoInicial)</dd>
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/estadoSubasta.png" class="icon-details">Estado:</dt>
+                                    <dd class="col-sm-8 detail-subastas">@(Model.EstaActivo ? "Subasta activa" : "Subasta inactiva")</dd>
                                 </dl>
                             </div>
                         </div>
@@ -44,8 +63,18 @@
             </div>
         </div>
 
-        <div class="col-md-6 mt-3">
-            <h4>Pujas de Usuarios</h4>
+        <div class="col-md-3 mt-3 tabla-pujas">
+            <h4 class="monto">$@ViewBag.MaxMontoPuja</h4>
+            <h6>Última puja por:</h6>
+            <h4>@ViewBag.NombreUsuarioMaxPuja</h4>
+            <hr />
+            <p> Incremento mínimo de puja: $@(ViewBag.MaxMontoPuja + 1)</p>
+            <div class="container d-flex justify-content-center">
+                <button class="btn-pujar" id="btnPujar">
+                    <img src="/assets/img/icons/pujaIconWhite.png" alt="Icono Detalles" height="30px">
+                    PUJAR
+                </button>
+            </div>
             <hr />
             <div style="max-height: 400px; overflow: auto;">
                 <table class="table">
@@ -80,30 +109,54 @@
         </div>
     }
 
-    <div class="container d-flex justify-content-center mt-3">
-        <button class="btn btn-primary text-white mx-2" id="btnPujar" @(isSubastaActiva ? "" : "disabled")>Pujar</button>
-        <a asp-action="Index" class="btn btn-secondary text-white mx-2">Regresar</a>
+    <!-- Contenedor del chat -->
+    <div id="chat-container" class="chat-container">
+        <div class="chat-header">
+            <h4>Chat</h4>
+            <button id="close-chat">X</button>
+        </div>
+        <div class="chat-body">
+            <div class="flex-grow-1 overflow-auto" id="chat-messages">
+                <!-- Aquí van los mensajes del chat -->
+            </div>
+            <div class="mt-1">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje...">
+                    <div class="input-group-append">
+                        <button class="btn-send-message" type="button">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const openChatBtn = document.getElementById("open-chat");
+            const chatContainer = document.getElementById("chat-container");
+            const closeChatBtn = document.getElementById("close-chat");
+
+            openChatBtn.addEventListener("click", function () {
+                chatContainer.style.display = "block";
+                openChatBtn.style.display = "none";
+            });
+
+            closeChatBtn.addEventListener("click", function () {
+                chatContainer.style.display = "none";
+                openChatBtn.style.display = "block";
+            });
+        });
+    </script>
+
+
+    <!-- Botón para abrir el chat -->
+    <div id="open-chat" class="open-chat">
+        <button class="btn-chat"><img src="/assets/img/icons/chatIcon.png" alt="Chat" height="30px" style="margin-right:10px">Chat</button>
     </div>
 
     <div class="container mt-2">
         <div class="row">
-            <div class="col-lg-6 col-md-12 mt-3 d-flex flex-column" style="max-height: 400px;min-height: 400px;">
-                <h4>Chat</h4>
-                <hr />
-                <div class="flex-grow-1 overflow-auto" style="border: 1px solid #ddd; padding: 10px;" id="chat-messages">
-                    <!-- Aquí van los mensajes del chat -->
-                </div>
-                <div class="mt-1">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="chat-input" placeholder="Escribe tu mensaje..." @(!isSubastaActiva ? "disabled" : "")>
-                        <div class="input-group-append">
-                            <button class="btn btn-primary btn-send-message" type="button" @(!isSubastaActiva ? "disabled" : "")>Enviar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 col-md-12 mt-3" style="max-height: 400px;min-height: 400px; overflow-y: auto;">
+            <!--<div class="col-lg-6 col-md-12 mt-3 container-participantes" style="max-height: 400px;min-height: 400px; overflow-y: auto;">
                 <h4>Participantes de la Subasta</h4>
                 <hr />
                 <table class="table participants-table">
@@ -115,17 +168,17 @@
                         </tr>
                     </thead>
                     <tbody id="participants-table-body">
-                        @foreach (var item in Model.ParticipantesSubasta)
-                        {
-                            <tr>
-                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
-                                <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
-                                <td>@Model.FechaSubasta</td>
-                            </tr>
-                        }
+            @foreach (var item in Model.ParticipantesSubasta)
+            {
+                                <tr>
+                                    <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                    <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
+                                    <td>@Model.FechaSubasta</td>
+                                </tr>
+            }
                     </tbody>
                 </table>
-            </div>
+            </div>-->
         </div>
     </div>
 
