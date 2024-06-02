@@ -27,20 +27,14 @@
                                 <h5 class="card-title">@Model.TituloSubasta</h5>
                                 <br />
                                 <dl class="row">
-                                    @if (isAdmin)
-                                    {
-                                        <dt class="col-sm-3">#:</dt>
-                                        <dd class="col-sm-9">@Model.IdSubasta</dd>
-                                    }
-                                    <dt class="col-sm-3">Monto actual:</dt>
-                                    <dd class="col-sm-9" id="current-amount">$@Model.MontoInicial</dd>
-                                    <dt class="col-sm-3">Estado:</dt>
-                                    <dd class="col-sm-9">@(Model.EstaActivo ? "En Curso" : "Finalizada")</dd>
                                     @if(Model.IdUsuario > 0 && Model.IdUsuarioNavigation != null)
                                     {
-                                        <dt class="col-sm-3">Ganador:</dt>
-                                        <dd class="col-sm-9">@Model?.IdUsuarioNavigation?.NombreUsuario @Model?.IdUsuarioNavigation?.ApellidoUsuario</dd>
+                                        <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/ganadorSubasta.png" class="icon-details">Ganador:</dt>
+                                        <dd class="col-sm-8 detail-subastas">@Model?.IdUsuarioNavigation?.NombreUsuario @Model?.IdUsuarioNavigation?.ApellidoUsuario</dd>
                                     }
+                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/montoActualSubasta.png" class="icon-details">Monto Actual:</dt>
+                                    <dd class="col-sm-8 detail-subastas" id="current-amount">$@(ViewBag.MaxMontoPuja ?? Model.MontoInicial)</dd>
+                                    <br /><br /><br />
                                     <dt class="col-sm-12">Información de la subasta</dt>
                                     <br /><br />
                                     <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/inicioSubasta.png" class="icon-details">Fecha de inicio:</dt>
@@ -51,10 +45,8 @@
                                     <dd class="col-sm-8 detail-subastas">@Model.IdSubasta</dd>
                                     <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/montoSubasta.png" class="icon-details">Monto Inicial:</dt>
                                     <dd class="col-sm-8 detail-subastas">$@Model.MontoInicial</dd>
-                                    <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/montoActualSubasta.png" class="icon-details">Monto Actual:</dt>
-                                    <dd class="col-sm-8 detail-subastas" id="current-amount">$@(ViewBag.MaxMontoPuja ?? Model.MontoInicial)</dd>
                                     <dt class="col-sm-4 detail-subastas"><img src="/assets/img/icons/estadoSubasta.png" class="icon-details">Estado:</dt>
-                                    <dd class="col-sm-8 detail-subastas">@(Model.EstaActivo ? "Subasta activa" : "Subasta inactiva")</dd>
+                                    <dd class="col-sm-8 detail-subastas">@(Model.EstaActivo ? "En Curso" : "Finalizada")</dd>
                                 </dl>
                             </div>
                         </div>
@@ -240,9 +232,12 @@
                             Swal.fire({
                                 title: 'Puja exitosa!',
                                 text: `Su puja de $${result.value.montoPuja} fue aceptada.`,
-                                icon: 'success'
+                                icon: 'success',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                                confirmButtonText: 'Aceptar'
                             }).then(() => {
-                                event.preventDefault();
+                                location.reload();
                             });
                         } else {
                             Swal.fire({
