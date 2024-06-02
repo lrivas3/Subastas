@@ -25,15 +25,18 @@ namespace Subastas.Controllers
         private readonly IProductoService _productoService;
         private readonly ISubastaService _subastaService;
         private readonly IUserService _userService;
+        private readonly IHubContext<SubastaHub> _hubContext;
 
         public SubastaController(
             IProductoService productoService,
             ISubastaService subastaService,
-            IUserService userService)
+            IUserService userService,
+            IHubContext<SubastaHub> hubContext)
         {
             _productoService = productoService;
             _subastaService = subastaService;
             _userService = userService;
+            _hubContext = hubContext as IHubContext<SubastaHub>; // Conversión explícita
         }
 
         public async Task<IActionResult> Index()
@@ -83,6 +86,7 @@ namespace Subastas.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    await _hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     await _subastaService.CreateAsync(subasta);
                     return RedirectToAction(nameof(Index));
                 }
@@ -157,6 +161,7 @@ namespace Subastas.Controllers
             {
                 try
                 {
+                    await _hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     await _subastaService.UpdateAsync(subasta);
                     return RedirectToAction(nameof(Index));
                 }
@@ -203,7 +208,7 @@ namespace Subastas.Controllers
                         await _userService.UpdateAsync(usuario);
                     }
 
-                    await hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
+                    await _hubContext.Clients.All.SendAsync("ReceiveSubastaUpdate");
                     result = new { success = true, errorMessage = "" };
                 }
                 else
@@ -217,6 +222,42 @@ namespace Subastas.Controllers
             }
 
             return Json(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TerminarSubasta(int idSubasta)
+        {
+            try
+            {
+                var subasta = await _subastaService.GetSubastaWithPujaAndUsers(idSubasta);
+
+                if (subasta == null)
+                {
+                    return NotFound();
+                }
+
+                subasta.EstaActivo = false;
+                var ganador = subasta.Pujas.OrderByDescending(p => p.MontoPuja).FirstOrDefault()?.IdUsuarioNavigation;
+
+                if (ganador == null)
+                {
+                    return NotFound();
+                }
+
+                subasta.IdUsuario = ganador.IdUsuario;
+
+                await _subastaService.UpdateAsync(subasta);
+
+                string administrador = User.Identity.Name;
+
+                await _hubContext.Clients.Group(subasta.IdSubasta.ToString()).SendAsync("ReceiveSubastaTerminada", administrador, ganador.NombreUsuario);
+
+                return Ok(new {success = true});
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
 
         public async Task<IActionResult> Export(string format)

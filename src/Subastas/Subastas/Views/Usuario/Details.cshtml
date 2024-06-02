@@ -9,6 +9,15 @@
         <img src="/assets/img/icons/returnIcon.png" alt="Regresar" height="40px">
         <a asp-action="Index">Regresar</a>
     </div>
+<<<<<<< HEAD
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="form-group text-center">
+            <a asp-action="Edit" asp-route-id="@Model.Usuario.IdUsuario" class="btn btn-primary">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+        </div>
+    }
+=======
     <br />
     <h1>Detalles</h1>
     <div class="container">
@@ -52,6 +61,7 @@
             <a asp-action="Edit" asp-route-id="@Model.Usuario.IdUsuario" class="btn btn-primary">Editar</a>
         </div>
     </div>
+>>>>>>> 4e3d1a7a51e2bbb27d85d946fca7515fd4a523f9
 </div>
 
 @section Scripts {
