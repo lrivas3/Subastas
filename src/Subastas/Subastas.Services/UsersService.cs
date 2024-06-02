@@ -33,8 +33,6 @@ namespace Subastas.Services
             if (newUsuario.IdUsuario > 0 && await ExistsByIdAsync(newUsuario.IdUsuario))
                 return await GetByIdAsync(newUsuario.IdUsuario);
 
-            newUsuario.Password = encrypManager.Encrypt(newUsuario.Password);
-
             return await CreateAsync(newUsuario);
         }
 
