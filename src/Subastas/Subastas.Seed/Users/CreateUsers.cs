@@ -184,7 +184,29 @@ namespace Subastas.Seed.Users
                 }
             });
 
-            Assert.True(usuario1 != null && usuario2 != null);
+            var usuario3 = await userService.CreateIfNotExistsAsync(new Usuario
+            {
+                CorreoUsuario = "csamayoa@ufg.edu.sv",
+                NombreUsuario = "Carmen",
+                ApellidoUsuario = "Sammayoa",
+                Cuentum = new Cuenta
+                {
+                    Saldo = 1000.00M,
+                    EstaActivo = true
+                },
+                EstaActivo = true,
+                Password = encrypManager.Encrypt("Pass12345"),
+                UsuarioRols = new Collection<UsuarioRol>
+                {
+                    new UsuarioRol
+                    {
+                        EstaActivo = true,
+                        IdRol = usuario.IdRol
+                    }
+                }
+            });
+
+            Assert.True(usuario1 != null && usuario2 != null && usuario3 != null);
         }
     }
 }
