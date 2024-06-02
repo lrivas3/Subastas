@@ -148,7 +148,7 @@
 
     <div class="container mt-2">
         <div class="row">
-            <!--<div class="col-lg-6 col-md-12 mt-3 container-participantes" style="max-height: 400px;min-height: 400px; overflow-y: auto;">
+            <div class="container-participantes" style="max-height: 400px; min-height: 400px; overflow-y: auto;">
                 <h4>Participantes de la Subasta</h4>
                 <hr />
                 <table class="table participants-table">
@@ -160,17 +160,17 @@
                         </tr>
                     </thead>
                     <tbody id="participants-table-body">
-            @foreach (var item in Model.ParticipantesSubasta)
-            {
-                                <tr>
-                                    <td>@item.IdUsuarioNavigation.NombreUsuario</td>
-                                    <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
-                                    <td>@Model.FechaSubasta</td>
-                                </tr>
-            }
+                        @foreach (var item in Model.ParticipantesSubasta)
+                        {
+                            <tr>
+                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                <td>@item.IdSubastaNavigation.IdUsuarioNavigation.CorreoUsuario</td>
+                                <td>@Model.FechaSubasta</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
-            </div>-->
+            </div>
         </div>
     </div>
 
