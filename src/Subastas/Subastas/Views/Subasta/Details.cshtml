@@ -81,7 +81,7 @@
                         @foreach (var item in Model.Pujas.OrderByDescending(x => x.MontoPuja))
                         {
                             <tr>
-                                <td>@item.IdUsuarioNavigation.NombreUsuario</td>
+                                <td>@item.IdUsuarioNavigation.NombreUsuario @item.IdUsuarioNavigation.ApellidoUsuario</td>
                                 <td>$@item.MontoPuja</td>
                                 <td>@item.FechaPuja.ToString("dd/M/yyyy, H:mm:ss")</td>
                             </tr>
@@ -244,8 +244,8 @@
                                 const valorMaxPuja = document.querySelector("#Valor-Max-Puja");
 
                                 userMaxPuja.innerText = currentUser;
-                                valorMaxPuja.innerText = result.value.montoPuja;
-                                minMaxPuja.innerText = result.value.montoPuja + 1;
+                                valorMaxPuja.innerText = '$' + result.value.montoPuja + '.00';
+                                minMaxPuja.innerText = (result.value.montoPuja + 1) + '.00';
                             });
                         } else {
                             Swal.fire({
