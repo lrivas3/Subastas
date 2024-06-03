@@ -4,10 +4,16 @@ connection.on("ReceiveBid", function (user, amount) {
     let formattedAmount = `$${parseFloat(amount).toFixed(2)}`;
 
     const bidTable = document.querySelector("#bid-table-body");
+    const userMaxPuja = document.querySelector("#Usuario-Max-Puja");
+    const minMaxPuja = document.querySelector("#Minimo-Max-Puja");
+    const valorMaxPuja = document.querySelector("#Valor-Max-Puja");
     const newRow = document.createElement("tr");
     newRow.innerHTML = `<td>${user}</td><td>${formattedAmount}</td><td>${new Date().toLocaleString()}</td>`;
     bidTable.prepend(newRow);
 
+    userMaxPuja.innerText = user;
+    valorMaxPuja.innerText = amount;
+    minMaxPuja.innerText = amount+1;
     document.querySelector("#current-amount").innerText = formattedAmount;
 });
 

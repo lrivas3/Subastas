@@ -56,11 +56,11 @@
         </div>
 
         <div class="col-md-3 mt-3 tabla-pujas">
-            <h4 class="monto">$@ViewBag.MaxMontoPuja</h4>
+            <h4 class="monto" id="Valor-Max-Puja">$@ViewBag.MaxMontoPuja</h4>
             <h6>Última puja por:</h6>
-            <h4>@ViewBag.NombreUsuarioMaxPuja</h4>
+            <h4 id="Usuario-Max-Puja">@ViewBag.NombreUsuarioMaxPuja</h4>
             <hr />
-            <p> Incremento mínimo de puja: $@(ViewBag.MaxMontoPuja + 1)</p>
+            <p> Incremento mínimo de puja: $<span id="Minimo-Max-Puja">@(ViewBag.MaxMontoPuja + 1)</span></p>
             <div class="container d-flex justify-content-center">
                 <button class="btn-pujar" id="btnPujar">
                     <img src="/assets/img/icons/pujaIconWhite.png" alt="Icono Detalles" height="30px">
@@ -184,6 +184,8 @@
         let currentSubastaId = "@Model.IdSubasta";
         let isSubastaActiva = @(isSubastaActiva ? "true" : "false");
 
+        let currentPujaAmount;
+
         document.getElementById("btnPujar").addEventListener("click", function () {
             if (isSubastaActiva) {
                 Swal.fire({
@@ -237,7 +239,13 @@
                                 allowEscapeKey: false,
                                 confirmButtonText: 'Aceptar'
                             }).then(() => {
-                                location.reload();
+                                const userMaxPuja = document.querySelector("#Usuario-Max-Puja");
+                                const minMaxPuja = document.querySelector("#Minimo-Max-Puja");
+                                const valorMaxPuja = document.querySelector("#Valor-Max-Puja");
+
+                                userMaxPuja.innerText = currentUser;
+                                valorMaxPuja.innerText = result.value.montoPuja;
+                                minMaxPuja.innerText = result.value.montoPuja + 1;
                             });
                         } else {
                             Swal.fire({
