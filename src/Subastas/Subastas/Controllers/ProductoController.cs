@@ -18,6 +18,7 @@ namespace Subastas.Controllers
     public class ProductoController : Controller
     {
         private readonly IProductoService _productoService;
+        private readonly ILogger<ProductoController> _logger;
 
         public ProductoController(IProductoService productoService)
         {
@@ -31,9 +32,10 @@ namespace Subastas.Controllers
                 var listaProductos = await _productoService.GetAllWithImageUrlsAsync();
                 return View(listaProductos);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 ViewData["Error"] = "An error occurred while trying to retrieve the products.";
+                _logger.LogError(ex, "An error occurred while trying to retrieve the products.");
                 return View();
             }
         }
@@ -64,6 +66,7 @@ namespace Subastas.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
+                _logger.LogError(ex, "An error occurred");
                 return View(productoRequest);
             }
         }
@@ -167,6 +170,7 @@ namespace Subastas.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
                 var productoToReturn = await _productoService.GetByIdAsync(id);
+                _logger.LogError(ex, "An error occurred");
                 return View(productoToReturn);
             }
         }
@@ -191,6 +195,7 @@ namespace Subastas.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener los productos: {ex.Message}");
+                _logger.LogError(ex, "An error occurred");
                 return StatusCode(500, "Error al obtener los productos");
             }
 
@@ -234,6 +239,7 @@ namespace Subastas.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error al generar el archivo Excel: {ex.Message}");
+                    _logger.LogError(ex, "An error occurred");
                     return StatusCode(500, "Error al generar el archivo Excel");
                 }
             }
@@ -249,6 +255,7 @@ namespace Subastas.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error al generar el archivo JSON: {ex.Message}");
+                    _logger.LogError(ex, "An error occurred");
                     return StatusCode(500, "Error al generar el archivo JSON");
                 }
             }
