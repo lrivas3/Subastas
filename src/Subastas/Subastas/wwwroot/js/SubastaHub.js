@@ -8,7 +8,7 @@ connection.on("ReceiveBid", function (user, amount) {
     const minMaxPuja = document.querySelector("#Minimo-Max-Puja");
     const valorMaxPuja = document.querySelector("#Valor-Max-Puja");
     const newRow = document.createElement("tr");
-    newRow.innerHTML = `<td>${user}</td><td>${formattedAmount}</td><td>${new Date().toLocaleString()}</td>`;
+    newRow.innerHTML = `<td>${user}</td><td>$${formattedAmount}</td><td>${new Date().toLocaleString()}</td>`;
     bidTable.prepend(newRow);
 
     userMaxPuja.innerText = user;
