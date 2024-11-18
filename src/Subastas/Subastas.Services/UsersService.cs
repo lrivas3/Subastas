@@ -63,7 +63,7 @@ namespace Subastas.Services
                 await userRepo.DeleteAsync(idUsuario);
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // TODO: SAVELOG
                 return false;

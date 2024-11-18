@@ -66,7 +66,7 @@ namespace Subastas.Controllers
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                _logger.LogError(ex, "An error occurred");
+                
                 return View(productoRequest);
             }
         }
@@ -170,7 +170,7 @@ namespace Subastas.Controllers
             {
                 ModelState.AddModelError("", ex.Message);
                 var productoToReturn = await _productoService.GetByIdAsync(id);
-                _logger.LogError(ex, "An error occurred");
+                
                 return View(productoToReturn);
             }
         }
@@ -195,7 +195,7 @@ namespace Subastas.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error al obtener los productos: {ex.Message}");
-                _logger.LogError(ex, "An error occurred");
+                
                 return StatusCode(500, "Error al obtener los productos");
             }
 
@@ -239,7 +239,7 @@ namespace Subastas.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error al generar el archivo Excel: {ex.Message}");
-                    _logger.LogError(ex, "An error occurred");
+                    
                     return StatusCode(500, "Error al generar el archivo Excel");
                 }
             }
@@ -255,7 +255,7 @@ namespace Subastas.Controllers
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error al generar el archivo JSON: {ex.Message}");
-                    _logger.LogError(ex, "An error occurred");
+                    
                     return StatusCode(500, "Error al generar el archivo JSON");
                 }
             }

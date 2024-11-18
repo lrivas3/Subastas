@@ -162,10 +162,10 @@ namespace Subastas.Controllers
                     // Validar contraseña
                     if (!string.IsNullOrWhiteSpace(viewModel.Usuario.Password))
                     {
-                        var decryptedPassword = encrypManager.Decrypt(usuarioDb.Password);
-                        if (decryptedPassword != viewModel.Usuario.Password)
+                        var encryptNewPass = encrypManager.Encrypt(usuarioDb.Password);
+                        if (encryptNewPass != viewModel.Usuario.Password)
                         {
-                            usuarioDb.Password = encrypManager.Encrypt(viewModel.Usuario.Password);
+                            usuarioDb.Password = encryptNewPass;
                         }
                     }
 
@@ -219,7 +219,7 @@ namespace Subastas.Controllers
                 ViewData["Error"] = "Error al eliminar el usuario";
                 return View();
             }
-            catch
+            catch(Exception ex)
             {
                 ViewData["Error"] = "Error al eliminar el usuario";
                 return View();

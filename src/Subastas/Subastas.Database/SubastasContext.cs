@@ -58,7 +58,7 @@ public partial class SubastasContext : DbContext
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithOne(p => p.Cuentum)
                 .HasForeignKey<Cuenta>(d => d.IdUsuario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_cuenta_usuarios");
         });
 
@@ -303,7 +303,7 @@ public partial class SubastasContext : DbContext
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.UsuarioRols)
                 .HasForeignKey(d => d.IdUsuario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_usuario_rol_usuarios");
         });
         modelBuilder.Entity<LogEntry>()
