@@ -47,11 +47,26 @@ namespace Subastas.Controllers
 
                 if (User.IsInRole("Admin"))
                 {
-                    listaSubasta = await _subastaService.GetAllAsync();
+                    listaSubasta = await _subastaService.GetCollectionByPredicateWithIncludesAsync(s => s.EstaActivo || !s.EstaActivo, x => x.Pujas);
                 }
                 else
                 {
-                    listaSubasta = await _subastaService.GetAllByPredicateAsync(s => s.EstaActivo);
+                    listaSubasta = await _subastaService.GetCollectionByPredicateWithIncludesAsync(s => s.EstaActivo, x => x.Pujas);
+                }
+
+                // Para cada subasta en la lista
+                foreach (var subasta in listaSubasta)
+                {
+                    if (subasta.Pujas.Any())
+                    {
+                        var ultimaPuja = subasta.Pujas.OrderByDescending(p => p.FechaPuja).First();
+
+                        subasta.MontoInicial = ultimaPuja.MontoPuja;
+                    }
+                    else
+                    {
+                        subasta.MontoInicial = 0;
+                    }
                 }
 
                 listaSubasta = await _subastaService.SetToListProductoWithImgPreloaded(listaSubasta.ToList());

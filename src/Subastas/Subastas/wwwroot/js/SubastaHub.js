@@ -12,7 +12,7 @@ connection.on("ReceiveBid", function (user, amount) {
     bidTable.prepend(newRow);
 
     userMaxPuja.innerText = user;
-    valorMaxPuja.innerText = `$${amount}`;
+    valorMaxPuja.innerText = `$${amount}.00`;
     minMaxPuja.innerText = amount+1;
     document.querySelector("#current-amount").innerText = formattedAmount;
 });
