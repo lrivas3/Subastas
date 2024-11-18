@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Subasta.Managers;
 using Subastas.Dependencies;
 using Subastas.Services.Shared.Logging.DbLoggerObjects;
-using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace Subastas
 {
@@ -11,19 +9,6 @@ namespace Subastas
     {
         public static void Main(string[] args)
         {
-            string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? "Central Standard Time" // Identificador para Windows
-            : "America/Chicago";      // Identificador para Linux
-
-            var centralTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-
-            // Registrar la cultura global para manejar fechas con UTC-6
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es-MX");
-            CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("es-MX");
-
-            // Mostrar un ejemplo al iniciar la aplicación
-            Console.WriteLine("Hora local (UTC-6): " + TimeZoneInfo.ConvertTime(DateTime.UtcNow, centralTimeZone));
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
