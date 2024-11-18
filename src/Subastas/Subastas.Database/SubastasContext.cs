@@ -53,7 +53,7 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.EstaActivo).HasColumnName("esta_activo");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.Saldo)
-                .HasColumnType("decimal(16, 2)")
+                .HasColumnType("decimal(26, 2)")
                 .HasColumnName("saldo");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithOne(p => p.Cuentum)
@@ -157,7 +157,7 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.IdSubasta).HasColumnName("id_subasta");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.MontoPuja)
-                .HasColumnType("decimal(16, 2)")
+                .HasColumnType("decimal(26, 2)")
                 .HasColumnName("monto_puja");
 
             entity.HasOne(d => d.IdSubastaNavigation).WithMany(p => p.Pujas)
@@ -222,7 +222,7 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.IdProducto).HasColumnName("id_producto");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.MontoInicial)
-                .HasColumnType("decimal(16, 2)")
+                .HasColumnType("decimal(26, 2)")
                 .HasColumnName("monto_inicial");
             entity.Property(e => e.TituloSubasta)
                 .HasMaxLength(100)
@@ -251,7 +251,7 @@ public partial class SubastasContext : DbContext
             entity.Property(e => e.FechaTransaccion).HasColumnName("fecha_transaccion");
             entity.Property(e => e.IdCuenta).HasColumnName("id_cuenta");
             entity.Property(e => e.MontoTransaccion)
-                .HasColumnType("decimal(16, 2)")
+                .HasColumnType("decimal(26, 2)")
                 .HasColumnName("monto_transaccion");
 
             entity.HasOne(d => d.IdCuentaNavigation).WithMany(p => p.Transacciones)

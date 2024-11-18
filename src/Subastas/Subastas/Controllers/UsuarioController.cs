@@ -72,6 +72,7 @@ namespace Subastas.Controllers
             {
                 try
                 {
+                    viewModel.Usuario.Password = encrypManager.Encrypt(viewModel?.Usuario?.Password);
                     await userService.CreateIfNotExistsAsync(viewModel.Usuario);
                     viewModel.Cuenta.IdUsuario = viewModel.Usuario.IdUsuario;
                     await cuentaService.CreateAsync(viewModel.Cuenta);
@@ -137,10 +138,36 @@ namespace Subastas.Controllers
                         return View("Create", viewModel);
                     }
 
-                    usuarioDb.NombreUsuario = viewModel.Usuario.NombreUsuario;
-                    usuarioDb.ApellidoUsuario = viewModel.Usuario.ApellidoUsuario;
-                    usuarioDb.CorreoUsuario = viewModel.Usuario.CorreoUsuario;
+                    // Validar y asignar solo si el valor ha cambiado
+                    if (!string.IsNullOrWhiteSpace(viewModel.Usuario.NombreUsuario) &&
+                        usuarioDb.NombreUsuario != viewModel.Usuario.NombreUsuario)
+                    {
+                        usuarioDb.NombreUsuario = viewModel.Usuario.NombreUsuario;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(viewModel.Usuario.ApellidoUsuario) &&
+                        usuarioDb.ApellidoUsuario != viewModel.Usuario.ApellidoUsuario)
+                    {
+                        usuarioDb.ApellidoUsuario = viewModel.Usuario.ApellidoUsuario;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(viewModel.Usuario.CorreoUsuario) &&
+                        usuarioDb.CorreoUsuario != viewModel.Usuario.CorreoUsuario)
+                    {
+                        usuarioDb.CorreoUsuario = viewModel.Usuario.CorreoUsuario;
+                    }
+
                     usuarioDb.EstaActivo = viewModel.Usuario.EstaActivo;
+
+                    // Validar contraseña
+                    if (!string.IsNullOrWhiteSpace(viewModel.Usuario.Password))
+                    {
+                        var decryptedPassword = encrypManager.Decrypt(usuarioDb.Password);
+                        if (decryptedPassword != viewModel.Usuario.Password)
+                        {
+                            usuarioDb.Password = encrypManager.Encrypt(viewModel.Usuario.Password);
+                        }
+                    }
 
                     await userService.UpdateAsync(usuarioDb);
 

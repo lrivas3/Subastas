@@ -65,19 +65,18 @@ namespace Subastas.Seed.Users
                     }
                 }
             });
-            
-            var emerson = await userService.CreateIfNotExistsAsync(new Usuario
+            var Chiristian = await userService.CreateIfNotExistsAsync(new Usuario
             {
-                CorreoUsuario = "ia.leonardorivas@ufg.edu.sv",
-                NombreUsuario = "Emerson",
-                ApellidoUsuario = "Rivas",
+                CorreoUsuario = "ia.christianp@ufg.edu.sv",
+                NombreUsuario = "Christian",
+                ApellidoUsuario = "Peña",
                 Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
                 },
                 EstaActivo = true,
-                Password = encrypManager.Encrypt("contraEmerson"),
+                Password = encrypManager.Encrypt("1234"),
                 UsuarioRols = new Collection<UsuarioRol>
                 {
                     new UsuarioRol
@@ -87,19 +86,18 @@ namespace Subastas.Seed.Users
                     }
                 }
             });
-
-            var guillermo = await userService.CreateIfNotExistsAsync(new Usuario
+            var Caleb = await userService.CreateIfNotExistsAsync(new Usuario
             {
-                CorreoUsuario = "ia.minero@ufg.edu.sv",
-                NombreUsuario = "Guillermo",
-                ApellidoUsuario = "Minero",
+                CorreoUsuario = "ia.hrcaleb15@ufg.edu.sv",
+                NombreUsuario = "Caleb",
+                ApellidoUsuario = "Hernandez",
                 Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
                 },
                 EstaActivo = true,
-                Password = encrypManager.Encrypt("contra123"),
+                Password = encrypManager.Encrypt("1234"),
                 UsuarioRols = new Collection<UsuarioRol>
                 {
                     new UsuarioRol
@@ -109,19 +107,18 @@ namespace Subastas.Seed.Users
                     }
                 }
             });
-
-            var Lisbeth = await userService.CreateIfNotExistsAsync(new Usuario
+            var Oscar = await userService.CreateIfNotExistsAsync(new Usuario
             {
-                CorreoUsuario = "ia.lisbethargueta@ufg.edu.sv",
-                NombreUsuario = "Lisbeth",
-                ApellidoUsuario = "Argueta",
+                CorreoUsuario = "ia.oscar90@ufg.edu.sv",
+                NombreUsuario = "Oscar",
+                ApellidoUsuario = "Minegro",
                 Cuentum = new Cuenta
                 {
-                    Saldo = 5000.00M,
+                    Saldo = 1000.00M,
                     EstaActivo = true
                 },
                 EstaActivo = true,
-                Password = encrypManager.Encrypt("contraLisbeth"),
+                Password = encrypManager.Encrypt("1234"),
                 UsuarioRols = new Collection<UsuarioRol>
                 {
                     new UsuarioRol
@@ -132,7 +129,7 @@ namespace Subastas.Seed.Users
                 }
             });
 
-            Assert.True(emerson != null && Alexis != null && Alfredo != null && guillermo != null && Lisbeth != null);
+            Assert.True(Alexis != null && Alfredo != null && Chiristian != null && Caleb != null && Oscar != null);
         }
 
         [Fact]
@@ -186,16 +183,16 @@ namespace Subastas.Seed.Users
 
             var usuario3 = await userService.CreateIfNotExistsAsync(new Usuario
             {
-                CorreoUsuario = "csamayoa@ufg.edu.sv",
-                NombreUsuario = "Carmen",
-                ApellidoUsuario = "Sammayoa",
+                CorreoUsuario = "jaimecortez@ufg.edu.sv",
+                NombreUsuario = "Jaime",
+                ApellidoUsuario = "Cortez",
                 Cuentum = new Cuenta
                 {
                     Saldo = 1000.00M,
                     EstaActivo = true
                 },
                 EstaActivo = true,
-                Password = encrypManager.Encrypt("Pass12345"),
+                Password = encrypManager.Encrypt("123456789"),
                 UsuarioRols = new Collection<UsuarioRol>
                 {
                     new UsuarioRol
