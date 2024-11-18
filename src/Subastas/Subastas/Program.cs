@@ -3,6 +3,7 @@ using Subasta.Managers;
 using Subastas.Dependencies;
 using Subastas.Services.Shared.Logging.DbLoggerObjects;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Subastas
 {
@@ -10,7 +11,11 @@ namespace Subastas
     {
         public static void Main(string[] args)
         {
-            var centralTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+            string timeZoneId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "Central Standard Time" // Identificador para Windows
+            : "America/Chicago";      // Identificador para Linux
+
+            var centralTimeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
             // Registrar la cultura global para manejar fechas con UTC-6
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("es-MX");
