@@ -51,6 +51,14 @@ namespace Subastas.Controllers
                     {
                         return Json(new { success = false, message = "Tu saldo es insuficiente" });
                     }
+
+                    var pujasSubasta = await pujaService.GetAllByPredicateAsync(x => x.IdSubasta == puja.IdSubasta);
+
+                    if (pujasSubasta.Any() && puja.MontoPuja <= pujasSubasta.Max(p => p.MontoPuja))
+                    {
+                        return Json(new { success = false, message = "La puja actual es mayor al monto enviado" });
+                    }                    
+                    
                     decimal saldo = user.Cuentum.Saldo - puja.MontoPuja;
 
                     var cuenta = await cuentaService.GetByUserIdAsync(puja.IdUsuario);

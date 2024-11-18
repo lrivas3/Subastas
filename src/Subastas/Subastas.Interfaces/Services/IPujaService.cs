@@ -1,4 +1,5 @@
 ﻿using Subastas.Domain;
+using System.Linq.Expressions;
 
 namespace Subastas.Interfaces
 {
@@ -12,5 +13,6 @@ namespace Subastas.Interfaces
         Task<Puja> GetByIdAsync(int idPuja);
         Task<Puja> GetByDatePujaAsync(DateTime fechaPuja);
         Task<bool> DeleteById(int idPuja);
+        Task<IEnumerable<Puja>> GetAllByPredicateAsync(Expression<Func<Puja, bool>> predicate);
     }
 }
