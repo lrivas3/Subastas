@@ -180,7 +180,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
 
     <script>
-        let currentUser = "@User.Identity.Name";
+        let unparsedUser = "@User.Identity.Name";
+        let currentUser = new DOMParser().parseFromString(unparsedUser, "text/html").documentElement.textContent;
         let currentSubastaId = "@Model.IdSubasta";
         let isSubastaActiva = @(isSubastaActiva ? "true" : "false");
 
